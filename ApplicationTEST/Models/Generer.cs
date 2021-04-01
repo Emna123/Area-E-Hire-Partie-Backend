@@ -20,9 +20,10 @@ namespace ApplicationTEST.Models
         public double salaire_min { get; set; }
         public List<Formation> formations { get; set; } 
        public List<Experience_prof> experience_profs { get; set; } 
-         public Candidat candidat {get; set;}   
+       public virtual Candidat candidat {get; set;}
+       public string  CandidatId  {get; set;}   
 
 
-        
-            }
+
+    }
 }

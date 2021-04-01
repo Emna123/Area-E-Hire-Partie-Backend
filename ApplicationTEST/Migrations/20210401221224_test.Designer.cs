@@ -10,8 +10,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ApplicationTEST.Migrations
 {
     [DbContext(typeof(TodoContext))]
-    [Migration("20210331230932_Imqpyrmopummmmmpm")]
-    partial class Imqpyrmopummmmmpm
+    [Migration("20210401221224_test")]
+    partial class test
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -45,9 +45,6 @@ namespace ApplicationTEST.Migrations
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("boolean");
-
-                    b.Property<int>("GenererId")
-                        .HasColumnType("integer");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("boolean");
@@ -95,9 +92,6 @@ namespace ApplicationTEST.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("GenererId")
-                        .IsUnique();
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -177,6 +171,9 @@ namespace ApplicationTEST.Migrations
                         .HasColumnType("integer")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
+                    b.Property<string>("CandidatId")
+                        .HasColumnType("text");
+
                     b.Property<string>("domaine_activite")
                         .HasColumnType("varchar");
 
@@ -190,6 +187,9 @@ namespace ApplicationTEST.Migrations
                         .HasColumnType("double precision");
 
                     b.HasKey("id_generer");
+
+                    b.HasIndex("CandidatId")
+                        .IsUnique();
 
                     b.ToTable("Generer");
                 });
@@ -347,17 +347,6 @@ namespace ApplicationTEST.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("ApplicationTEST.Models.Candidat", b =>
-                {
-                    b.HasOne("ApplicationTEST.Models.Generer", "generer")
-                        .WithOne("candidat")
-                        .HasForeignKey("ApplicationTEST.Models.Candidat", "GenererId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("generer");
-                });
-
             modelBuilder.Entity("ApplicationTEST.Models.Experience_prof", b =>
                 {
                     b.HasOne("ApplicationTEST.Models.Generer", "generer")
@@ -374,6 +363,15 @@ namespace ApplicationTEST.Migrations
                         .HasForeignKey("id_generer");
 
                     b.Navigation("generer");
+                });
+
+            modelBuilder.Entity("ApplicationTEST.Models.Generer", b =>
+                {
+                    b.HasOne("ApplicationTEST.Models.Candidat", "candidat")
+                        .WithOne("generer")
+                        .HasForeignKey("ApplicationTEST.Models.Generer", "CandidatId");
+
+                    b.Navigation("candidat");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -427,10 +425,13 @@ namespace ApplicationTEST.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("ApplicationTEST.Models.Candidat", b =>
+                {
+                    b.Navigation("generer");
+                });
+
             modelBuilder.Entity("ApplicationTEST.Models.Generer", b =>
                 {
-                    b.Navigation("candidat");
-
                     b.Navigation("experience_profs");
 
                     b.Navigation("formations");

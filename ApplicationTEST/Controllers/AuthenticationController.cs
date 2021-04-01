@@ -64,8 +64,8 @@ namespace ApplicationTEST.Controllers
                 SecurityStamp = Guid.NewGuid().ToString(),
                 UserName = model.UserName,
                 nom = model.nom,
-                prenom=model.prenom,
-                password= model.password
+                prenom = model.prenom,
+                password = model.password,
             };
             var result = await userManager.CreateAsync(candidat,model.password);
             if (!result.Succeeded)

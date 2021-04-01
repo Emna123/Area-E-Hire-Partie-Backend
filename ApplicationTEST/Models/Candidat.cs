@@ -11,16 +11,16 @@ namespace ApplicationTEST.Models
 {
     public class Candidat:IdentityUser
     {
-        [Key]
-      
+        //[Key]
+       // public long Id { get; set; }
         public string nom { get; set; }
         public string prenom { get; set; }
         public string password { get; set; }
         public string CVname { get; set; }
         public string CVoriginalfilename { get; set; }
         public string key { get; set; }
-        public Generer generer {get; set;} 
-        public int  GenererId  {get; set;}   
+        public virtual Generer generer {get; set;} 
+        //public int  GenererId  {get; set;}   
 
 
     }
