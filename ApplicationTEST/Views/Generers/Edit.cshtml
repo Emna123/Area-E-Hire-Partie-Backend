@@ -1,0 +1,49 @@
+﻿@model ApplicationTEST.Models.Generer
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>Generer</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="id_generer" />
+            <div class="form-group">
+                <label asp-for="poste_domande" class="control-label"></label>
+                <input asp-for="poste_domande" class="form-control" />
+                <span asp-validation-for="poste_domande" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="domaine_activite" class="control-label"></label>
+                <input asp-for="domaine_activite" class="form-control" />
+                <span asp-validation-for="domaine_activite" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="photo_profil" class="control-label"></label>
+                <input asp-for="photo_profil" class="form-control" />
+                <span asp-validation-for="photo_profil" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="salaire_min" class="control-label"></label>
+                <input asp-for="salaire_min" class="form-control" />
+                <span asp-validation-for="salaire_min" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

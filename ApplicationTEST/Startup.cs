@@ -11,6 +11,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.Extensions.FileProviders;
 using System.IO;
+using EmailService;
 
 namespace ApplicationTEST
 {
@@ -27,7 +28,11 @@ namespace ApplicationTEST
         public void ConfigureServices(IServiceCollection services)
         {
             //services.AddDbContext<TodoContext>(opt =>opt.UseInMemoryDatabase("maa"));
-
+            var emailConfig = Configuration
+           .GetSection("EmailConfiguration")
+            .Get<EmailConfiguration>();
+            services.AddSingleton(emailConfig);
+            services.AddScoped<IEmailSender, EmailSender>();
             //For entity framework
             services.AddDbContext<TodoContext>(opt => opt.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
             //For Identity
