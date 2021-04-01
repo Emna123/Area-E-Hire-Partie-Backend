@@ -19,5 +19,9 @@ namespace ApplicationTEST.Models
         public string CVname { get; set; }
         public string CVoriginalfilename { get; set; }
         public string key { get; set; }
+        public Generer generer {get; set;} 
+        public int  GenererId  {get; set;}   
+
+
     }
 }

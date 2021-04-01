@@ -19,24 +19,6 @@ namespace ApplicationTEST.Migrations
                 .HasAnnotation("ProductVersion", "5.0.4")
                 .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-            modelBuilder.Entity("ApplicationTEST.Models.CV", b =>
-                {
-                    b.Property<long>("id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
-
-                    b.Property<DateTime>("datecreation")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<string>("type")
-                        .HasColumnType("text");
-
-                    b.HasKey("id");
-
-                    b.ToTable("CVs");
-                });
-
             modelBuilder.Entity("ApplicationTEST.Models.Candidat", b =>
                 {
                     b.Property<string>("Id")
@@ -61,6 +43,9 @@ namespace ApplicationTEST.Migrations
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("boolean");
+
+                    b.Property<int>("GenererId")
+                        .HasColumnType("integer");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("boolean");
@@ -109,6 +94,9 @@ namespace ApplicationTEST.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("GenererId")
+                        .IsUnique();
+
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
 
@@ -117,6 +105,114 @@ namespace ApplicationTEST.Migrations
                         .HasDatabaseName("UserNameIndex");
 
                     b.ToTable("AspNetUsers");
+                });
+
+            modelBuilder.Entity("ApplicationTEST.Models.Experience_prof", b =>
+                {
+                    b.Property<int>("id_ex")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<DateTime>("date_debut")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime>("date_fin")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("description")
+                        .HasColumnType("varchar");
+
+                    b.Property<int?>("id_generer")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("lieu_Exp")
+                        .HasColumnType("varchar");
+
+                    b.Property<string>("poste_occupe")
+                        .HasColumnType("varchar");
+
+                    b.HasKey("id_ex");
+
+                    b.HasIndex("id_generer");
+
+                    b.ToTable("Experience_prof");
+                });
+
+            modelBuilder.Entity("ApplicationTEST.Models.Formation", b =>
+                {
+                    b.Property<int>("id_formation")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<DateTime>("date_debut")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime>("date_fin")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("diplome")
+                        .HasColumnType("varchar");
+
+                    b.Property<int?>("id_generer")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("universite")
+                        .HasColumnType("varchar");
+
+                    b.HasKey("id_formation");
+
+                    b.HasIndex("id_generer");
+
+                    b.ToTable("Formation");
+                });
+
+            modelBuilder.Entity("ApplicationTEST.Models.Generer", b =>
+                {
+                    b.Property<int>("id_generer")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<string>("domaine_activite")
+                        .HasColumnType("varchar");
+
+                    b.Property<string>("photo_profil")
+                        .HasColumnType("varchar");
+
+                    b.Property<string>("poste_domande")
+                        .HasColumnType("varchar");
+
+                    b.Property<double>("salaire_min")
+                        .HasColumnType("double precision");
+
+                    b.HasKey("id_generer");
+
+                    b.ToTable("Generer");
+                });
+
+            modelBuilder.Entity("ApplicationTEST.Models.Responsable_RH", b =>
+                {
+                    b.Property<int>("id_resp")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<int>("code")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("e_mail")
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar");
+
+                    b.Property<string>("mdp")
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar");
+
+                    b.HasKey("id_resp");
+
+                    b.ToTable("Responsable_RH");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -249,6 +345,35 @@ namespace ApplicationTEST.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
+            modelBuilder.Entity("ApplicationTEST.Models.Candidat", b =>
+                {
+                    b.HasOne("ApplicationTEST.Models.Generer", "generer")
+                        .WithOne("candidat")
+                        .HasForeignKey("ApplicationTEST.Models.Candidat", "GenererId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("generer");
+                });
+
+            modelBuilder.Entity("ApplicationTEST.Models.Experience_prof", b =>
+                {
+                    b.HasOne("ApplicationTEST.Models.Generer", "generer")
+                        .WithMany("experience_profs")
+                        .HasForeignKey("id_generer");
+
+                    b.Navigation("generer");
+                });
+
+            modelBuilder.Entity("ApplicationTEST.Models.Formation", b =>
+                {
+                    b.HasOne("ApplicationTEST.Models.Generer", "generer")
+                        .WithMany("formations")
+                        .HasForeignKey("id_generer");
+
+                    b.Navigation("generer");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -298,6 +423,15 @@ namespace ApplicationTEST.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("ApplicationTEST.Models.Generer", b =>
+                {
+                    b.Navigation("candidat");
+
+                    b.Navigation("experience_profs");
+
+                    b.Navigation("formations");
                 });
 #pragma warning restore 612, 618
         }

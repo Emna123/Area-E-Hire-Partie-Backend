@@ -13,16 +13,37 @@ namespace ApplicationTEST.Models
         {
             
         }
-        protected override void OnModelCreating(ModelBuilder builder)
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(builder);
+      
+      
+     
+  
+        modelBuilder.Entity<Formation>() 
+            .HasOne(pt => pt.generer) 
+            .WithMany(p => p.formations) 
+            .HasForeignKey("id_generer");
+        modelBuilder.Entity<Experience_prof>() 
+            .HasOne(pt => pt.generer) 
+            .WithMany(p => p.experience_profs) 
+            .HasForeignKey("id_generer");
+        modelBuilder.Entity<Candidat>() 
+            .HasOne(pt => pt.generer) 
+            .WithOne(p => p.candidat) 
+            .HasForeignKey<Candidat>(b => b.GenererId);
+
+            base.OnModelCreating(modelBuilder);
+
         }
         
 
 
         public DbSet<Candidat> Candidats { get; set; }
-        public DbSet<CV> CVs { get; set; }
+        public DbSet<Responsable_RH> Responsable_RH { get; set; }
+        public DbSet<Experience_prof> Experience_prof { get; set; }
 
+        public DbSet<Formation> Formation { get; set; }
+        public DbSet<Generer> Generer { get; set; }
 
     }
 }
