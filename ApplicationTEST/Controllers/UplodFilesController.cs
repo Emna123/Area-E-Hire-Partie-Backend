@@ -9,12 +9,16 @@ using System.IO;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace ApplicationTEST.Controllers
 {
+     
+     [Authorize]
+
     [Route("api/[controller]")]
     [ApiController]
     public class UplodFilesController : ControllerBase
@@ -42,6 +46,7 @@ namespace ApplicationTEST.Controllers
         public async Task<IActionResult> Post([FromForm] UploadFile objectfile) 
         {
             try
+
             {
                 if (objectfile.file.Length > 0)
                 {

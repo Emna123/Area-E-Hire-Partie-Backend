@@ -23,21 +23,26 @@ namespace ApplicationTEST.Models
             .HasOne(pt => pt.generer) 
             .WithMany(p => p.formations) 
             .HasForeignKey("id_generer");
+
         modelBuilder.Entity<Experience_prof>() 
             .HasOne(pt => pt.generer) 
             .WithMany(p => p.experience_profs) 
             .HasForeignKey("id_generer");
-        modelBuilder.Entity<Candidat>() 
-            .HasOne(pt => pt.generer) 
-            .WithOne(p => p.candidat) 
-            .HasForeignKey<Candidat>(b => b.GenererId);
+
+            modelBuilder.Entity<Candidat>()
+           .HasOne(b => b.generer)
+           .WithOne(i => i.candidat)
+           .HasForeignKey<Generer>(b => b.CandidatId);
+
+            /* modelBuilder.Entity<Candidat>() 
+                 .HasOne(pt => pt.generer) 
+                 .WithOne(p => p.candidat) 
+                 .HasForeignKey<Candidat>(b => b.GenererId);*/
 
             base.OnModelCreating(modelBuilder);
 
         }
         
-
-
         public DbSet<Candidat> Candidats { get; set; }
         public DbSet<Responsable_RH> Responsable_RH { get; set; }
         public DbSet<Experience_prof> Experience_prof { get; set; }

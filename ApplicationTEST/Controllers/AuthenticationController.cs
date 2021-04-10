@@ -64,8 +64,8 @@ namespace ApplicationTEST.Controllers
                 SecurityStamp = Guid.NewGuid().ToString(),
                 UserName = model.UserName,
                 nom = model.nom,
-                prenom=model.prenom,
-                password= model.password
+                prenom = model.prenom,
+                password = model.password,
             };
             var result = await userManager.CreateAsync(candidat,model.password);
             if (!result.Succeeded)
@@ -76,7 +76,7 @@ namespace ApplicationTEST.Controllers
             message.From.Add(new MailboxAddress("area-e-hire  ", "areaehirer.recrutement@gmail.com"));
             message.To.Add(new MailboxAddress("", model.Email));
             message.Subject = "Confirmation Compte Area E-Hire";
-            var chaine = "Bonjour "+model.nom.ToUpper() +" " + model.prenom+"! \n Veuillez Confirmer votre compte en cliquant sur ce lien \n http://localhost:3000/Inscription/Confirmation-compte?id="+model.UserName+"";
+            var chaine = "Bonjour "+model.nom.ToUpper() + " " + model.prenom +"! \n Veuillez Confirmer votre compte en cliquant sur ce lien \n http://localhost:3000/Inscription/Confirmation-compte?id="+model.UserName+"";
             message.Body = new TextPart("plain")
             {
                 Text = chaine.ToString()
@@ -120,16 +120,21 @@ namespace ApplicationTEST.Controllers
                 var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
                 var email = "";
                 var token = new JwtSecurityToken(
-                   // issuer:  _configuration["JWT:ValidIssuer"],
+                    issuer:  _configuration["JWT:ValidIssuer"],
                     audience: _configuration["JWT:ValidAudience"],
                     expires: DateTime.Now.AddHours(5),
-                    //userClaims = authClaims,
+                 //   claims = authClaims,
                     signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
                     );
-                return Ok(user);
+                return Ok(new
+                {
+                    token = new JwtSecurityTokenHandler().WriteToken(token),
+                    user = user
+                }) ;
             }
-            else { 
-               return Unauthorized();
+            else
+            {
+                return Unauthorized();
             }
         }
         [HttpPost]
