@@ -9,15 +9,17 @@ namespace ApplicationTEST.Models
     public class Formation
     {
         [Key]
-        public int id_formation { get; set; }
+        public int id { get; set; }
         [Column(TypeName = "varchar")]
-        public String diplome { get; set; }
+        public string diplome { get; set; }
         [Column(TypeName = "varchar")]
-        public String universite { get; set; }
+        public string universite { get; set; }
         [Column]
-        public DateTime date_debut { get; set; }
+        public string annee_debut { get; set; }
         [Column]
-        public DateTime date_fin { get; set; }
+        public string annee_fin { get; set; }
+        public string description { get; set; }
+        public Candidat candidat { get; set; }
         public Generer generer {get; set;}   
     }
 }

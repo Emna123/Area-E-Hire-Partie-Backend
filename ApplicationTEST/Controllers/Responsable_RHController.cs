@@ -25,7 +25,7 @@ namespace ApplicationTEST.Controllers
         }
 
         // GET: Responsable_RH/Details/5
-        public async Task<IActionResult> Details(int? id)
+       /* public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
             {
@@ -147,6 +147,6 @@ namespace ApplicationTEST.Controllers
         private bool Responsable_RHExists(int id)
         {
             return _context.Responsable_RH.Any(e => e.id_resp == id);
-        }
+        }*/
     }
 }
