@@ -3,15 +3,17 @@ using System;
 using ApplicationTEST.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace ApplicationTEST.Migrations
 {
     [DbContext(typeof(TodoContext))]
-    partial class TodoContextModelSnapshot : ModelSnapshot
+    [Migration("20210512041006_Migration8")]
+    partial class Migration8
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -83,9 +85,6 @@ namespace ApplicationTEST.Migrations
                     b.Property<string>("adresse")
                         .HasColumnType("text");
 
-                    b.Property<bool>("archiver")
-                        .HasColumnType("boolean");
-
                     b.Property<DateTime>("date_naissance")
                         .HasColumnType("timestamp without time zone");
 
@@ -122,9 +121,6 @@ namespace ApplicationTEST.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
-
-                    b.Property<bool>("archiver")
-                        .HasColumnType("boolean");
 
                     b.Property<string>("candidatId")
                         .HasColumnType("text");
@@ -413,9 +409,6 @@ namespace ApplicationTEST.Migrations
                     b.Property<string>("annee_exp")
                         .HasColumnType("text");
 
-                    b.Property<bool>("archiver")
-                        .HasColumnType("boolean");
-
                     b.Property<string>("date_expiration")
                         .HasColumnType("text");
 
@@ -476,23 +469,61 @@ namespace ApplicationTEST.Migrations
 
             modelBuilder.Entity("ApplicationTEST.Models.Responsable_RH", b =>
                 {
-                    b.Property<int>("id_resp")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasColumnType("text");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("UserName")
+                        .HasColumnType("text");
 
                     b.Property<int>("code")
                         .HasColumnType("integer");
 
-                    b.Property<string>("e_mail")
-                        .HasMaxLength(100)
-                        .HasColumnType("varchar");
+                    b.Property<string>("key")
+                        .HasColumnType("text");
 
                     b.Property<string>("mdp")
-                        .HasMaxLength(100)
-                        .HasColumnType("varchar");
+                        .HasColumnType("text");
 
-                    b.HasKey("id_resp");
+                    b.HasKey("Id");
 
                     b.ToTable("Responsable_RH");
                 });

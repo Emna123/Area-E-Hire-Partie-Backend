@@ -3,15 +3,17 @@ using System;
 using ApplicationTEST.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace ApplicationTEST.Migrations
 {
     [DbContext(typeof(TodoContext))]
-    partial class TodoContextModelSnapshot : ModelSnapshot
+    [Migration("20210507063741_Migration5")]
+    partial class Migration5
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -83,9 +85,6 @@ namespace ApplicationTEST.Migrations
                     b.Property<string>("adresse")
                         .HasColumnType("text");
 
-                    b.Property<bool>("archiver")
-                        .HasColumnType("boolean");
-
                     b.Property<DateTime>("date_naissance")
                         .HasColumnType("timestamp without time zone");
 
@@ -114,52 +113,6 @@ namespace ApplicationTEST.Migrations
                         .HasDatabaseName("UserNameIndex");
 
                     b.ToTable("AspNetUsers");
-                });
-
-            modelBuilder.Entity("ApplicationTEST.Models.Candidature", b =>
-                {
-                    b.Property<long>("id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
-
-                    b.Property<bool>("archiver")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("candidatId")
-                        .HasColumnType("text");
-
-                    b.Property<string>("date_candidature")
-                        .HasColumnType("text");
-
-                    b.Property<string>("email")
-                        .HasColumnType("text");
-
-                    b.Property<string>("etat")
-                        .HasColumnType("text");
-
-                    b.Property<string>("lettre_motivation")
-                        .HasColumnType("text");
-
-                    b.Property<string>("nom")
-                        .HasColumnType("text");
-
-                    b.Property<int?>("offreid")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("prenom")
-                        .HasColumnType("text");
-
-                    b.Property<string>("salaire_demande")
-                        .HasColumnType("text");
-
-                    b.HasKey("id");
-
-                    b.HasIndex("candidatId");
-
-                    b.HasIndex("offreid");
-
-                    b.ToTable("Candidature");
                 });
 
             modelBuilder.Entity("ApplicationTEST.Models.Commentaire", b =>
@@ -413,9 +366,6 @@ namespace ApplicationTEST.Migrations
                     b.Property<string>("annee_exp")
                         .HasColumnType("text");
 
-                    b.Property<bool>("archiver")
-                        .HasColumnType("boolean");
-
                     b.Property<string>("date_expiration")
                         .HasColumnType("text");
 
@@ -476,23 +426,61 @@ namespace ApplicationTEST.Migrations
 
             modelBuilder.Entity("ApplicationTEST.Models.Responsable_RH", b =>
                 {
-                    b.Property<int>("id_resp")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasColumnType("text");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("UserName")
+                        .HasColumnType("text");
 
                     b.Property<int>("code")
                         .HasColumnType("integer");
 
-                    b.Property<string>("e_mail")
-                        .HasMaxLength(100)
-                        .HasColumnType("varchar");
+                    b.Property<string>("key")
+                        .HasColumnType("text");
 
                     b.Property<string>("mdp")
-                        .HasMaxLength(100)
-                        .HasColumnType("varchar");
+                        .HasColumnType("text");
 
-                    b.HasKey("id_resp");
+                    b.HasKey("Id");
 
                     b.ToTable("Responsable_RH");
                 });
@@ -627,23 +615,6 @@ namespace ApplicationTEST.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("ApplicationTEST.Models.Candidature", b =>
-                {
-                    b.HasOne("ApplicationTEST.Models.Candidat", "candidat")
-                        .WithMany("Candidature")
-                        .HasForeignKey("candidatId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("ApplicationTEST.Models.Offre", "offre")
-                        .WithMany("Candidature")
-                        .HasForeignKey("offreid")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("candidat");
-
-                    b.Navigation("offre");
-                });
-
             modelBuilder.Entity("ApplicationTEST.Models.Commentaire", b =>
                 {
                     b.HasOne("ApplicationTEST.Models.Candidat", "candidat")
@@ -662,7 +633,7 @@ namespace ApplicationTEST.Migrations
                     b.HasOne("ApplicationTEST.Models.Offre", "offre")
                         .WithMany("Competence")
                         .HasForeignKey("offreid")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("candidat");
 
@@ -674,7 +645,7 @@ namespace ApplicationTEST.Migrations
                     b.HasOne("ApplicationTEST.Models.Offre", "offre")
                         .WithMany("Diplome")
                         .HasForeignKey("offreid")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("offre");
                 });
@@ -736,7 +707,7 @@ namespace ApplicationTEST.Migrations
                     b.HasOne("ApplicationTEST.Models.Offre", "offre")
                         .WithMany("Langue")
                         .HasForeignKey("offreid")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("candidat");
 
@@ -748,7 +719,7 @@ namespace ApplicationTEST.Migrations
                     b.HasOne("ApplicationTEST.Models.Offre", "offre")
                         .WithMany("Questionnaire")
                         .HasForeignKey("offreid")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("offre");
                 });
@@ -806,8 +777,6 @@ namespace ApplicationTEST.Migrations
 
             modelBuilder.Entity("ApplicationTEST.Models.Candidat", b =>
                 {
-                    b.Navigation("Candidature");
-
                     b.Navigation("Commentaire");
 
                     b.Navigation("Competence");
@@ -832,8 +801,6 @@ namespace ApplicationTEST.Migrations
 
             modelBuilder.Entity("ApplicationTEST.Models.Offre", b =>
                 {
-                    b.Navigation("Candidature");
-
                     b.Navigation("Competence");
 
                     b.Navigation("Diplome");

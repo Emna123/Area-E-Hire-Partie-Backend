@@ -25,7 +25,11 @@ namespace ApplicationTEST.Controllers
         }
 
         // GET: Responsable_RH/Details/5
+<<<<<<< Updated upstream
         public async Task<IActionResult> Details(int? id)
+=======
+       /* public async Task<IActionResult> Details(int? id)
+>>>>>>> Stashed changes
         {
             if (id == null)
             {
@@ -129,6 +133,7 @@ namespace ApplicationTEST.Controllers
             {
                 return NotFound();
             }
+<<<<<<< Updated upstream
 
             return View(responsable_RH);
         }
@@ -147,6 +152,26 @@ namespace ApplicationTEST.Controllers
         private bool Responsable_RHExists(int id)
         {
             return _context.Responsable_RH.Any(e => e.id_resp == id);
+=======
+
+            return View(responsable_RH);
+>>>>>>> Stashed changes
         }
+
+        // POST: Responsable_RH/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var responsable_RH = await _context.Responsable_RH.FindAsync(id);
+            _context.Responsable_RH.Remove(responsable_RH);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
+        private bool Responsable_RHExists(int id)
+        {
+            return _context.Responsable_RH.Any(e => e.id_resp == id);
+        }*/
     }
 }

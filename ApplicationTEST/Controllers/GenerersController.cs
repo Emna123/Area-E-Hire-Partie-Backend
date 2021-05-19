@@ -19,7 +19,7 @@ namespace ApplicationTEST.Controllers
         }
 
         // GET: Generers
-        public async Task<IActionResult> Index()
+      /*  public async Task<IActionResult> Index()
         {
             return View(await _context.Generer.ToListAsync());
         }
@@ -147,6 +147,6 @@ namespace ApplicationTEST.Controllers
         private bool GenererExists(int id)
         {
             return _context.Generer.Any(e => e.id_generer == id);
-        }
+        }*/
     }
 }

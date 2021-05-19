@@ -6,147 +6,80 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ApplicationTEST.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ApplicationTEST.Controllers
 {
+    [Authorize]
+    [Route("api/[controller]")]
+    [ApiController]
     public class FormationsController : Controller
     {
         private readonly TodoContext _context;
+        private readonly UserManager<Candidat> userManager;
 
-        public FormationsController(TodoContext context)
+
+        public FormationsController(TodoContext context, UserManager<Candidat> userManager)
         {
+            this.userManager = userManager;
             _context = context;
         }
 
-        // GET: Formations
-        public async Task<IActionResult> Index()
+        [HttpGet]
+        [Route("getAllFormations/{id}")]
+        public async Task<IActionResult> GetFormations(string id)
         {
-            return View(await _context.Formation.ToListAsync());
-        }
-
-        // GET: Formations/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
+            var user = await userManager.FindByIdAsync(id);
+            if (user != null)
             {
-                return NotFound();
+                var formations = _context.Formations.Where(f => f.candidat == user);
+                return Ok(new
+                {
+                    formations
+                });
             }
-
-            var formation = await _context.Formation
-                .FirstOrDefaultAsync(m => m.id_formation == id);
-            if (formation == null)
-            {
-                return NotFound();
-            }
-
-            return View(formation);
+            return NotFound();
         }
 
-        // GET: Formations/Create
-        public IActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: Formations/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("id_formation,diplome,universite,date_debut,date_fin")] Formation formation)
+        [Route("AddFormation/{id}")]
+        public async Task<IActionResult> AddFormation(string id, [FromBody] Formation formation)
         {
-            if (ModelState.IsValid)
+            var user = await userManager.FindByIdAsync(id);
+            if (user != null)
             {
+                formation.candidat = user;
                 _context.Add(formation);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(formation);
-        }
-
-        // GET: Formations/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var formation = await _context.Formation.FindAsync(id);
-            if (formation == null)
-            {
-                return NotFound();
-            }
-            return View(formation);
-        }
-
-        // POST: Formations/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("id_formation,diplome,universite,date_debut,date_fin")] Formation formation)
-        {
-            if (id != formation.id_formation)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
+                _context.SaveChanges();
+                return Ok(new
                 {
-                    _context.Update(formation);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
+                    formation = formation
+                });
+            }
+            return NotFound();
+        }
+
+        [HttpDelete]
+        [Route("DeleteFormation/{id}")]
+        public async Task<IActionResult> DelFormation(int id)
+        {
+            var formation = await _context.Formations.FindAsync(id);
+            if (formation != null)
+            {
+                _context.Remove(formation);
+                _context.SaveChanges();
+                return Ok(new
                 {
-                    if (!FormationExists(formation.id_formation))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                    msg = "formation supprimée avec succée !"
+                });
             }
-            return View(formation);
+            return NotFound();
         }
 
-        // GET: Formations/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+     /*   private bool FormationExists(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var formation = await _context.Formation
-                .FirstOrDefaultAsync(m => m.id_formation == id);
-            if (formation == null)
-            {
-                return NotFound();
-            }
-
-            return View(formation);
-        }
-
-        // POST: Formations/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var formation = await _context.Formation.FindAsync(id);
-            _context.Formation.Remove(formation);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-
-        private bool FormationExists(int id)
-        {
-            return _context.Formation.Any(e => e.id_formation == id);
-        }
+            return _context.Formation.Any(e => e.id == id);
+        }*/
     }
 }
