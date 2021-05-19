@@ -62,7 +62,7 @@ namespace ApplicationTEST.Controllers
                                                     .ThenInclude(x => x.langues)
                                                     .Include(x => x.offre)
                                                     .ThenInclude(x => x.candidatures).
-                   Where(e => e.candidat == user);
+                                                     Where(e => e.candidat == user);
             return Ok(new
             {
                 candidatures = candidatures
