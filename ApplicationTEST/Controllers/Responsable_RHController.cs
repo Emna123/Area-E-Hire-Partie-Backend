@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -25,11 +25,10 @@ namespace ApplicationTEST.Controllers
         }
 
         // GET: Responsable_RH/Details/5
-<<<<<<< Updated upstream
+
         public async Task<IActionResult> Details(int? id)
-=======
        /* public async Task<IActionResult> Details(int? id)
->>>>>>> Stashed changes
+       /* public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
             {
@@ -133,7 +132,6 @@ namespace ApplicationTEST.Controllers
             {
                 return NotFound();
             }
-<<<<<<< Updated upstream
 
             return View(responsable_RH);
         }
@@ -152,10 +150,8 @@ namespace ApplicationTEST.Controllers
         private bool Responsable_RHExists(int id)
         {
             return _context.Responsable_RH.Any(e => e.id_resp == id);
-=======
 
             return View(responsable_RH);
->>>>>>> Stashed changes
         }
 
         // POST: Responsable_RH/Delete/5

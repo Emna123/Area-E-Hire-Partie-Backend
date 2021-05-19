@@ -1,4 +1,4 @@
-﻿using ApplicationTEST.Models;
+using ApplicationTEST.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -37,7 +37,11 @@ namespace ApplicationTEST.Controllers
             var user = await userManager.FindByIdAsync(id);
             if (user != null)
             {
+
                 var comps = _context.Competence.Where(c => c.candidat == user);
+
+                var comps = _context.Competences.Where(c => c.candidat == user);
+
                 return Ok(new
                 {
                     comps
@@ -68,7 +72,11 @@ namespace ApplicationTEST.Controllers
         [Route("DeleteCompetence/{id}")]
         public async Task<IActionResult> DelCompetence(int id)
         {
+
             var comp = await _context.Competence.FindAsync(id);
+
+            var comp = await _context.Competences.FindAsync(id);
+
             if (comp != null)
             {
                 _context.Remove(comp);
@@ -111,6 +119,22 @@ namespace ApplicationTEST.Controllers
                 return Ok(new
                 {
                     msg = "competence supprimée avec succée !"
+        //Update Compétence 
+        [HttpPut]
+        [Route("UpdateCompetence/{id}")]
+        public async Task<IActionResult> UpdateCompt(int id, Competence comp)
+        {
+            var competence = await _context.Competences.FindAsync(id);
+            if (competence != null)
+            {
+                competence.candidat = competence.candidat;
+                competence.titre = comp.titre;
+                competence.niveau = comp.niveau;
+                _context.Entry(competence).State = EntityState.Modified;
+                _context.SaveChanges();
+                return Ok(new
+                {
+                    updatedcomp = competence
                 });
             }
             return NotFound();
@@ -148,7 +172,6 @@ namespace ApplicationTEST.Controllers
 
 
         }
-
 
 
     }

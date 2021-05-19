@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -10,6 +10,7 @@ namespace ApplicationTEST.Models
     {
         [Key]
         public long id { get; set; }
+        public int id { get; set; }
         public string etat { get; set; }
         public string nom { get; set; }
         public string prenom { get; set; }

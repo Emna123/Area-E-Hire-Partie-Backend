@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -18,6 +18,9 @@ namespace ApplicationTEST.Models
         public DateTime annee_debut { get; set; }
         [Column]
         public DateTime annee_fin { get; set; }
+        public string annee_debut { get; set; }
+        [Column]
+        public string annee_fin { get; set; }
         public string description { get; set; }
         public Candidat candidat { get; set; }
         public Generer generer {get; set;}   

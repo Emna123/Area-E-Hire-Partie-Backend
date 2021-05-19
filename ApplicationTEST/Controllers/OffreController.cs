@@ -1,4 +1,4 @@
-﻿using ApplicationTEST.Models;
+using ApplicationTEST.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -47,8 +47,16 @@ namespace ApplicationTEST.Controllers
             }
 
             return offre;
+            return await  _context.Offres.Include(x=>x.diplomes).
+                                         Include(x=>x.langues).
+                                         Include(x => x.competences).
+                                         Include(x=>x.candidatures).
+                                      //   Where(x=> Convert.ToDateTime(x.date_expiration) > Convert.ToDateTime(DateTime.Now.ToString())).
+                                         ToListAsync();
         }
 
+        // GET api/<OffreController>/5
+       
         // POST api/<OffreController>
         [HttpPost]
         [Route("PostOffre")]
@@ -146,6 +154,6 @@ namespace ApplicationTEST.Controllers
                 });
             }
             return NotFound();
-        }
+     
     }
 }

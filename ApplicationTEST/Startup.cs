@@ -28,6 +28,11 @@ namespace ApplicationTEST
         public void ConfigureServices(IServiceCollection services)
         {
             //services.AddDbContext<TodoContext>(opt =>opt.UseInMemoryDatabase("maa"));
+            services.AddControllersWithViews()
+                  .AddNewtonsoftJson(options =>
+                 
+                   options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+            );
             var emailConfig = Configuration
            .GetSection("EmailConfiguration")
             .Get<EmailConfiguration>();
@@ -39,6 +44,17 @@ namespace ApplicationTEST
             services.AddIdentity<Candidat, IdentityRole>()
                 .AddEntityFrameworkStores<TodoContext>()
                 .AddDefaultTokenProviders();
+
+           var tokenvalidationparams = new TokenValidationParameters()
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidAudience = Configuration["JWT:ValidAudience"],
+                ValidIssuer = Configuration["JWT:ValidIssuer"],
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JWT:Secret"]))
+
+
+            };
             //Adding authentication
             services.AddAuthentication(options =>
             {
@@ -51,19 +67,10 @@ namespace ApplicationTEST
             {
                 options.SaveToken = true;
                 options.RequireHttpsMetadata = false;
-                options.SaveToken = true;
-                options.TokenValidationParameters = new TokenValidationParameters()
-                {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidAudience = Configuration["JWT:ValidAudience"],
-                    ValidIssuer = Configuration["JWT:ValidIssuer"],
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JWT:Secret"]))
-
-
-                };
+                // options.SaveToken = true;
+                options.TokenValidationParameters = tokenvalidationparams;
             });
-
+            services.AddSingleton(tokenvalidationparams);
         services.AddCors();
           
             services.AddControllers()
@@ -83,7 +90,15 @@ namespace ApplicationTEST
             app.UseStaticFiles(new StaticFileOptions
             {
                 FileProvider = new PhysicalFileProvider(Path.Combine(env.ContentRootPath, "wwwroot/uploads")),
-                RequestPath = "/Files"
+                RequestPath = "/Files",
+
+                
+            }) ;
+
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(Path.Combine(env.ContentRootPath, "wwwroot/images")),
+                RequestPath = "/Photos",
             });
 
             /*var tokenValidationParameters = new TokenValidationParameters

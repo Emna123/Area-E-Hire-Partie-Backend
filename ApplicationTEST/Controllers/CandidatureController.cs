@@ -1,10 +1,12 @@
-﻿using ApplicationTEST.Models;
+using ApplicationTEST.Models;
 using MailKit.Net.Smtp;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MimeKit;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,7 +34,10 @@ namespace ApplicationTEST.Controllers
         public async Task<IActionResult> AddCandidature(string id,int idoffre, [FromBody] Candidature candidature)
         {
             var user = await userManager.FindByIdAsync(id);
+
             var offre = await _context.Offre.FindAsync(idoffre);
+
+            var offre = await _context.Offres.FindAsync(idoffre);
             Console.WriteLine("Offre ", offre);
             if (user != null && offre != null)
             {
@@ -40,8 +45,9 @@ namespace ApplicationTEST.Controllers
                 candidature.date_candidature = DateTime.Now.ToString();
                 candidature.etat = "en attente";
                 candidature.offre = offre;
-
 _context.Add(candidature);
+
+                _context.Add(candidature);
                 _context.SaveChanges();
                 return Ok(new
                 {
@@ -57,8 +63,19 @@ _context.Add(candidature);
         public async Task<ActionResult<IEnumerable<Candidature>>> getAllCandidatures(string id)
         {
             var user = await userManager.FindByIdAsync(id);
+
             var candidatures = _context.Candidature.
                 Where(e => e.candidat == user);
+
+            var candidatures = _context.Candidatures.Include(x => x.offre)
+                                                    .ThenInclude(x => x.diplomes)
+                                                    .Include(x => x.offre)
+                                                    .ThenInclude(x => x.competences)
+                                                    .Include(x => x.offre)
+                                                    .ThenInclude(x => x.langues)
+                                                    .Include(x => x.offre)
+                                                    .ThenInclude(x => x.candidatures).
+                   Where(e => e.candidat == user);
             return Ok(new
             {
                 candidatures = candidatures
@@ -169,12 +186,22 @@ _context.Add(candidature);
         public async Task<IActionResult> DelCompetence(long id)
         {
             var candidature = await _context.Candidature.FindAsync(id);
+
+        [HttpDelete]
+        [Route("deleteCandidature/{id}")]
+        public async Task<ActionResult<IEnumerable<Candidature>>> deleteCandidature(int id)
+        {
+            // var user = await userManager.FindByIdAsync(id);
+            var candidature = await _context.Candidatures.FindAsync(id);
+
+
             if (candidature != null)
             {
                 _context.Remove(candidature);
                 _context.SaveChanges();
                 return Ok(new
                 {
+
                     msg = "Candidature supprimé avec succée !"
                 });
             }
@@ -182,4 +209,16 @@ _context.Add(candidature);
         }
     }
  
+
+                    message = "candidatures supprimée avec succés ! "
+                });
+            }
+            else
+            {
+                return NotFound();
+            }
+          
+        }
+    }
+
 }

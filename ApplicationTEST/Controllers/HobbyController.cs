@@ -1,8 +1,9 @@
-﻿using ApplicationTEST.Models;
+using ApplicationTEST.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,8 +33,6 @@ namespace ApplicationTEST.Controllers
             var user = await userManager.FindByIdAsync(id);
             if (user != null)
             {
-
-
                 var hobbies = _context.Hobbies.Where(h => h.candidat == user);
                 return Ok(new
                 {
@@ -73,6 +72,26 @@ namespace ApplicationTEST.Controllers
                 return Ok(new
                 {
                     msg = "Hobby supprimé avec succée !"
+                });
+            }
+            return NotFound();
+        }
+
+        //Update Hobby 
+        [HttpPut]
+        [Route("UpdateHobby/{id}")]
+        public async Task<IActionResult> UpdateCompt(int id, Hobby loisir)
+        {
+            var hobby = await _context.Hobbies.FindAsync(id);
+            if (hobby != null)
+            {
+                hobby.candidat = hobby.candidat;
+                hobby.hobby = loisir.hobby;
+                _context.Entry(hobby).State = EntityState.Modified;
+                _context.SaveChanges();
+                return Ok(new
+                {
+                    updatedhobby = hobby
                 });
             }
             return NotFound();

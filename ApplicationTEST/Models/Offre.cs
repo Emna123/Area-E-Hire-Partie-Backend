@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -6,8 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 
 namespace ApplicationTEST.Models
-{
-  
+{  
     public class Offre
     {
 
@@ -20,6 +19,8 @@ namespace ApplicationTEST.Models
         {
             _lazyLoader = lazyLoader;
         }
+    public class Offre
+    {
         [Key]
         public int id { get; set; }
         public string titre { get; set; }
@@ -68,7 +69,10 @@ namespace ApplicationTEST.Models
             get => _lazyLoader.Load(this, ref _Questionnaire);
             set => _Questionnaire = value;
         }
-
+        public ICollection<Diplome> diplomes { get; set; }
+        public ICollection<Langue> langues { get; set; }
+        public ICollection<Competence> competences { get; set;}
+        public ICollection<Candidature> candidatures { get; set; }
 
     }
 }

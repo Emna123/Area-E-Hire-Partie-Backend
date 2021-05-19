@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -77,9 +77,47 @@ namespace ApplicationTEST.Controllers
             return NotFound();
         }
 
+
+        [HttpDelete]
+        [Route("DeleteFormation/{id}")]
+        public async Task<IActionResult> DelFormation(int id)
+
+        //Update Formation 
+        [HttpPut]
+        [Route("UpdateFormation/{id}")]
+        public async Task<IActionResult> UpdateFormation(int id, Formation form)
+        {
+            var formation = await _context.Formations.FindAsync(id);
+            if (formation != null)
+            {
+                _context.Remove(formation);
+                _context.SaveChanges();
+                return Ok(new
+                {
+                    msg = "formation supprimée avec succée !"
+                formation.candidat = formation.candidat;
+                formation.universite = form.universite;
+                formation.diplome = form.diplome;
+                formation.annee_debut = form.annee_debut;
+                formation.annee_fin = form.annee_fin;
+                formation.description = form.description;
+                _context.Entry(formation).State = EntityState.Modified;
+                _context.SaveChanges();
+                return Ok(new
+                {
+                    updatedformation = formation
+                });
+            }
+            return NotFound();
+        }
+
      /*   private bool FormationExists(int id)
         {
             return _context.Formation.Any(e => e.id == id);
         }*/
+        /*   private bool FormationExists(int id)
+           {
+               return _context.Formation.Any(e => e.id == id);
+           }*/
     }
 }
