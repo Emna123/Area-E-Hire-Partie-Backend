@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -14,5 +14,7 @@ namespace ApplicationTEST.Models
         public string niveau { get; set; }
         public Candidat candidat { get; set; }
         public Offre offre { get; set; }
+        public Boolean require { get; set; }
+
     }
 }

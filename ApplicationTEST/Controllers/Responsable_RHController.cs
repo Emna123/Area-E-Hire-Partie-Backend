@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -25,6 +25,9 @@ namespace ApplicationTEST.Controllers
         }
 
         // GET: Responsable_RH/Details/5
+
+        public async Task<IActionResult> Details(int? id)
+       /* public async Task<IActionResult> Details(int? id)
        /* public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -129,6 +132,24 @@ namespace ApplicationTEST.Controllers
             {
                 return NotFound();
             }
+
+            return View(responsable_RH);
+        }
+
+        // POST: Responsable_RH/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var responsable_RH = await _context.Responsable_RH.FindAsync(id);
+            _context.Responsable_RH.Remove(responsable_RH);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
+        private bool Responsable_RHExists(int id)
+        {
+            return _context.Responsable_RH.Any(e => e.id_resp == id);
 
             return View(responsable_RH);
         }

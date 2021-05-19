@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,6 +15,9 @@ namespace ApplicationTEST.Models
         [Column(TypeName = "varchar")]
         public string universite { get; set; }
         [Column]
+        public DateTime annee_debut { get; set; }
+        [Column]
+        public DateTime annee_fin { get; set; }
         public string annee_debut { get; set; }
         [Column]
         public string annee_fin { get; set; }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -23,6 +23,7 @@ namespace ApplicationTEST.Controllers
         public CandidatsController(UserManager<Candidat> userManager,TodoContext context)
         {
             _context = context;
+
             this.userManager = userManager;
 
         }
@@ -39,6 +40,8 @@ namespace ApplicationTEST.Controllers
         [HttpGet("{id}")]
         public  async Task<Candidat> GetCandidat(string id)
         {
+
+           
              var candidat = await _context.Candidats.Include(x => x.experiences)
                                                     .Include(x => x.competences)
                                                     .Include(x => x.langues)
@@ -52,6 +55,7 @@ namespace ApplicationTEST.Controllers
                                                     .FirstOrDefaultAsync(i => i.Id == id); 
           //  var candidat =  candidats.FindAsync(id);
            // candidat = candidat.Include(x => x.experience);
+
             if (candidat == null)
             {
                 return null;
@@ -202,6 +206,21 @@ namespace ApplicationTEST.Controllers
             return NotFound();
         }
 
+        //get experiences
+
+        [HttpGet]
+        [Route("getExperiences/{id}")]
+        public async Task<IActionResult> GetExps(string id)
+        {
+            var user = await GetCandidat(id);
+            if (user != null)
+            {
+                var exps = _context.Experience_prof.Where(e => e.candidat == user);
+                return Ok(new
+                {
+                    exps
+
+
         //Update Langue 
         [HttpPut]
         [Route("UpdateLanguage/{id}")]
@@ -218,19 +237,35 @@ namespace ApplicationTEST.Controllers
                 return Ok(new
                 {
                     languemodifier = langue
+
                 });
             }
             return NotFound();
         }
+
+        //get Commentaire
+
+
+        [HttpGet]
+        [Route("getCommentaire/{id}")]
+        public async Task<IActionResult> GetCommentaire(string id)
+
         //get experiences
 
         [HttpGet]
         [Route("getExperiences/{id}")]
         public async Task<IActionResult> GetExps(string id)
+
         {
             var user = await GetCandidat(id);
             if (user != null)
             {
+
+                var cmt = _context.Commentaire.Where(e => e.candidat == user);
+                return Ok(new
+                {
+                    cmt
+
                 var exps = _context.Experience_prof.Where(e => e.candidat == user);
                 return Ok(new
                 {
@@ -277,6 +312,37 @@ namespace ApplicationTEST.Controllers
 
         }
 
+        [HttpPost]
+        [Route("AddCommentaire/{id}")]
+        public async Task<IActionResult> AddCommentaire(string id, [FromBody] Commentaire commentaire)
+        {
+            var user = await GetCandidat(id);
+            if (user != null)
+            {
+                commentaire.candidat = user;
+                _context.Add(commentaire);
+                _context.SaveChanges();
+                return Ok(new
+                {
+                     commentaire
+                });
+            }
+            return NotFound();
+
+        }
+        [HttpDelete]
+        [Route("DeleteCommentaire/{id}")]
+        public async Task<IActionResult> DeleteCommentaire(int id)
+        {
+            var commentaire = await _context.Commentaire.FindAsync(id);
+            if (commentaire != null)
+            {
+                _context.Remove(commentaire);
+                _context.SaveChanges();
+                return Ok(new
+                {
+
+
         //Update Experience 
         [HttpPut]
         [Route("UpdateExperience/{id}")]
@@ -298,9 +364,12 @@ namespace ApplicationTEST.Controllers
                 return Ok(new
                 {
                     updatedexp = experience
+
                 });
             }
             return NotFound();
         }
     }
+  
+
 }

@@ -1,4 +1,4 @@
-﻿using ApplicationTEST.Models;
+using ApplicationTEST.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -37,7 +37,11 @@ namespace ApplicationTEST.Controllers
             var user = await userManager.FindByIdAsync(id);
             if (user != null)
             {
+
+                var comps = _context.Competence.Where(c => c.candidat == user);
+
                 var comps = _context.Competences.Where(c => c.candidat == user);
+
                 return Ok(new
                 {
                     comps
@@ -68,7 +72,11 @@ namespace ApplicationTEST.Controllers
         [Route("DeleteCompetence/{id}")]
         public async Task<IActionResult> DelCompetence(int id)
         {
+
+            var comp = await _context.Competence.FindAsync(id);
+
             var comp = await _context.Competences.FindAsync(id);
+
             if (comp != null)
             {
                 _context.Remove(comp);
@@ -81,6 +89,36 @@ namespace ApplicationTEST.Controllers
             return NotFound();
         }
 
+        [HttpPost]
+        [Route("AddOffreCompetence/{id}")]
+        public async Task<IActionResult> AddOffreCompetance(int id, [FromBody] Competence competence)
+        {
+            var offre = await _context.Offre.FindAsync(id);
+            if (offre != null)
+            {
+                competence.offre = offre;
+                _context.Add(competence);
+                _context.SaveChanges();
+                return Ok(new
+                {
+                    competence
+                });
+            }
+            return NotFound();
+        }
+
+        [HttpDelete]
+        [Route("DeleteOffreCompetence/{id}")]
+        public async Task<IActionResult> DeleteLangue(int id)
+        {
+            var competence = await _context.Competence.FindAsync(id);
+            if (competence != null)
+            {
+                _context.Remove(competence);
+                _context.SaveChanges();
+                return Ok(new
+                {
+                    msg = "competence supprimée avec succée !"
         //Update Compétence 
         [HttpPut]
         [Route("UpdateCompetence/{id}")]
@@ -101,6 +139,40 @@ namespace ApplicationTEST.Controllers
             }
             return NotFound();
         }
+
+        [HttpPut]
+        [Route("PutOffreCompetence/{id}")]
+
+        public async Task<ActionResult<Competence>> Putlangue(int id, Competence competence)
+        {
+            if (id != competence.id)
+            {
+                return BadRequest();
+            }
+
+            _context.Entry(competence).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (await _context.Competence.FindAsync(id) == null)
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return await _context.Competence.FindAsync(id);
+
+
+        }
+
 
     }
 }

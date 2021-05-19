@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -77,6 +77,11 @@ namespace ApplicationTEST.Controllers
             return NotFound();
         }
 
+
+        [HttpDelete]
+        [Route("DeleteFormation/{id}")]
+        public async Task<IActionResult> DelFormation(int id)
+
         //Update Formation 
         [HttpPut]
         [Route("UpdateFormation/{id}")]
@@ -85,6 +90,11 @@ namespace ApplicationTEST.Controllers
             var formation = await _context.Formations.FindAsync(id);
             if (formation != null)
             {
+                _context.Remove(formation);
+                _context.SaveChanges();
+                return Ok(new
+                {
+                    msg = "formation supprimée avec succée !"
                 formation.candidat = formation.candidat;
                 formation.universite = form.universite;
                 formation.diplome = form.diplome;
@@ -101,6 +111,10 @@ namespace ApplicationTEST.Controllers
             return NotFound();
         }
 
+     /*   private bool FormationExists(int id)
+        {
+            return _context.Formation.Any(e => e.id == id);
+        }*/
         /*   private bool FormationExists(int id)
            {
                return _context.Formation.Any(e => e.id == id);
