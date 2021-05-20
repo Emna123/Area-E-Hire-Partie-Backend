@@ -12,14 +12,14 @@ namespace ApplicationTEST.Models
     {
 
         private readonly ILazyLoader _lazyLoader;
-        public Offre()
+       /* public Offre()
         {
 
         }
         public Offre(ILazyLoader lazyLoader)
         {
             _lazyLoader = lazyLoader;
-        }
+        }*/
         [Key]
         public int id { get; set; }
         public string titre { get; set; }
@@ -39,7 +39,7 @@ namespace ApplicationTEST.Models
         public virtual ICollection<Langue> Langue { get; set; }
         public virtual ICollection<Diplome> Diplome { get; set; }
         public virtual ICollection<Questionnaire> Questionnaire { get; set; }
-
+        public virtual Examen  Examen { get; set; }
 
         /*   private ICollection<Candidature> _Candidature;
            public ICollection<Candidature> Candidature

@@ -99,6 +99,38 @@ namespace ApplicationTEST.Models
            .HasOne(pt => pt.candidat)
            .WithOne(p => p.linkedin)
            .HasForeignKey<Linkedin>(c => c.id_candidat);
+
+            modelBuilder.Entity<Offre>()
+                   .HasOne(pt => pt.Examen)
+                   .WithOne(p => p.Offre)
+                   .HasForeignKey<Examen>(c => c.id_offre); ;
+
+            modelBuilder.Entity<Candidat>()
+                  .HasMany(pt => pt.examenresults)
+                  .WithOne(p => p.candidat);
+
+            modelBuilder.Entity<Examen>()
+                 .HasMany(pt => pt.examenresults)
+                 .WithOne(p => p.examen);
+
+            modelBuilder.Entity<Question>()
+                .HasMany(pt => pt.notes_questions)
+                .WithOne(p => p.question);
+
+            modelBuilder.Entity<Examen>()
+               .HasMany(pt => pt.notes_questions)
+               .WithOne(p => p.examen);
+
+            modelBuilder.Entity<Question>()
+               .HasMany(pt => pt.reponses)
+               .WithOne(p => p.question)
+               .OnDelete(DeleteBehavior.Restrict); 
+
+            /*    modelBuilder.Entity<Candidat>()
+                       .HasOne(pt => pt.Examen)
+                       .WithOne(p => p.Offre);*/
+
+
             //.OnDelete(DeleteBehavior.Cascade);
 
             // .OnDelete(DeleteBehavior.Restrict);
