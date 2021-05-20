@@ -2,7 +2,7 @@
 
 namespace ApplicationTEST.Migrations
 {
-    public partial class linkedin11 : Migration
+    public partial class firstthird : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

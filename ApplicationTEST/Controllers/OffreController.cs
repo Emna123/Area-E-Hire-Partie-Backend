@@ -12,7 +12,6 @@ using System.Threading.Tasks;
 
 namespace ApplicationTEST.Controllers
 {
-    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class OffreController : ControllerBase
@@ -30,10 +29,17 @@ namespace ApplicationTEST.Controllers
         [Route("getAllOffres")]
         public async Task<ActionResult<IEnumerable<Offre>>> GetOffres()
         {
-            return await _context.Offre.ToListAsync();
+            return await _context.Offres.ToListAsync();
+            /*.Include(x => x.diplomes).
+                                        Include(x => x.langues).
+                                        Include(x => x.competences).
+                                        Include(x => x.candidatures).
+                                        //   Where(x=> Convert.ToDateTime(x.date_expiration) > Convert.ToDateTime(DateTime.Now.ToString())).
+                                        ToListAsync();*/
         }
 
         // GET api/<OffreController>/5
+        [Authorize]
         [HttpGet]
         [Route("getOffre/{id}")]
 
@@ -47,28 +53,20 @@ namespace ApplicationTEST.Controllers
             }
 
             return offre;
-            return await  _context.Offres.Include(x=>x.diplomes).
-                                         Include(x=>x.langues).
-                                         Include(x => x.competences).
-                                         Include(x=>x.candidatures).
-                                      //   Where(x=> Convert.ToDateTime(x.date_expiration) > Convert.ToDateTime(DateTime.Now.ToString())).
-                                         ToListAsync();
+          
         }
-
-        // GET api/<OffreController>/5
-       
+        [Authorize]
         // POST api/<OffreController>
         [HttpPost]
         [Route("PostOffre")]
 
         public async Task<ActionResult<Offre>> PostOffre(Offre offre)
         {
-           
             if (await _context.Offre.FindAsync(offre.id) == null)
             {
                 offre.archiver = false;
                 _context.Offre.Add(offre);
-            await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync();
                 return Ok(new
                 {
                      offre
@@ -76,7 +74,7 @@ namespace ApplicationTEST.Controllers
             }
             return NotFound();
         }
-
+        [Authorize]
         // PUT api/<OffreController>/5
         [HttpPut]
         [Route("PutOffre/{id}")]
@@ -87,9 +85,7 @@ namespace ApplicationTEST.Controllers
             {
                 return BadRequest();
             }
-
             _context.Entry(offre).State = EntityState.Modified;
-
             try
             {
                 await _context.SaveChangesAsync();
@@ -107,9 +103,8 @@ namespace ApplicationTEST.Controllers
             }
 
             return await _context.Offre.FindAsync(id);
-
-
         }
+        [Authorize]
         // DELETE api/<OffreController>/5
         [HttpDelete]
         [Route("DeleteOffre/{id}")]
@@ -118,12 +113,12 @@ namespace ApplicationTEST.Controllers
 
             var comp = await _context.Offre.FindAsync(id);
 
-      
+
             if (comp != null)
             {
-                foreach( var d in comp.Diplome)
+                foreach (var d in comp.Diplome)
                 {
-                   _context.Remove(d);
+                    _context.Remove(d);
 
                 }
                 foreach (var d in comp.Langue)
@@ -154,6 +149,7 @@ namespace ApplicationTEST.Controllers
                 });
             }
             return NotFound();
+        }
      
     }
 }

@@ -2,7 +2,7 @@
 
 namespace ApplicationTEST.Migrations
 {
-    public partial class access_data4 : Migration
+    public partial class firstforth : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

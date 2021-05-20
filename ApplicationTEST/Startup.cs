@@ -39,7 +39,9 @@ namespace ApplicationTEST
             services.AddSingleton(emailConfig);
             services.AddScoped<IEmailSender, EmailSender>();
             //For entity framework
-            services.AddDbContext<TodoContext>(opt => opt.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddDbContext<TodoContext>(opt => opt.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"))
+            );
+            //.UseLazyLoadingProxies()
             //For Identity
             services.AddIdentity<Candidat, IdentityRole>()
                 .AddEntityFrameworkStores<TodoContext>()
@@ -76,7 +78,7 @@ namespace ApplicationTEST
             services.AddControllers()
             .AddNewtonsoftJson(options =>
             options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
-);
+         );
 
         }
 

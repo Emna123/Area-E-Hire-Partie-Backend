@@ -13,21 +13,19 @@ namespace ApplicationTEST.Models
      
         public string poste_occupe { get; set; }
       
-        public string poste_occupe { get; set; }
         public string lieu_Exp { get; set; }
         [Column]
-        public string date_debut { get; set; }
+        public DateTime date_debut { get; set; }
         [Column]
         public string employeur { get; set; }
         [Column]
         public DateTime date_fin { get; set; }
-        public string date_fin { get; set; }
         [Column]
         public string typeEmploi { get; set; }
         [Column(TypeName = "varchar")]
         public string description { get; set; }
-        public Generer generer {get; set;}
-        public Candidat candidat { get; set; }
+        public virtual Generer generer {get; set;}
+        public virtual Candidat candidat { get; set; }
 
     }
 }

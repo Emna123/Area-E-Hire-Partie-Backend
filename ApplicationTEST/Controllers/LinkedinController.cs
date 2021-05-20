@@ -32,7 +32,7 @@ namespace ApplicationTEST.Controllers
             var user = await userManager.FindByIdAsync(id);
             if (user != null)
             {
-                var linkedin = _context.Linkedins.Where(c => c.candidat == user);
+                var linkedin = _context.Linkedins.Where(c => c.candidat == user).FirstOrDefault();
                 return Ok(new
                 {
                     linkedin
@@ -48,7 +48,7 @@ namespace ApplicationTEST.Controllers
             var user = await userManager.FindByIdAsync(id);
             if (user != null)
             {
-                Linkedin x = _context.Linkedins.Where(c => c.candidat == user).FirstOrDefault(); ;
+                Linkedin x = _context.Linkedins.Where(c => c.candidat == user).FirstOrDefault();
                 if (x != null)
                 {
                     //_context.Remove(x);

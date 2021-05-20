@@ -8,7 +8,7 @@ namespace ApplicationTEST.Models
         [Key]
         public int id { get; set; }
         public string linkedin { get; set; }
-        public Candidat candidat { get; set; }
+        public virtual Candidat candidat { get; set; }
         public string id_candidat { get; set; }
     }
 }

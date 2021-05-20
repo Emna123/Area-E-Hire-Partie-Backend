@@ -23,9 +23,7 @@ namespace ApplicationTEST.Controllers
         public CandidatsController(UserManager<Candidat> userManager,TodoContext context)
         {
             _context = context;
-
             this.userManager = userManager;
-
         }
 
         // GET: api/Candidats
@@ -40,28 +38,11 @@ namespace ApplicationTEST.Controllers
         [HttpGet("{id}")]
         public  async Task<Candidat> GetCandidat(string id)
         {
-
-           
-             var candidat = await _context.Candidats.Include(x => x.experiences)
-                                                    .Include(x => x.competences)
-                                                    .Include(x => x.langues)
-                                                    .Include(x => x.linkedin)
-                                                    .Include(x => x.hobbies)
-                                                    .Include(x => x.formations)
-                                                    .Include(x => x.candidatures)
-                                                    .ThenInclude(x=>x.offre)
-                                                    .Include(x => x.candidatures)
-                                                    .ThenInclude(x => x.candidat)
-                                                    .FirstOrDefaultAsync(i => i.Id == id); 
-          //  var candidat =  candidats.FindAsync(id);
-           // candidat = candidat.Include(x => x.experience);
-
-            if (candidat == null)
-            {
-                return null;
-            }
-
-            return candidat;
+            var candidat =  _context.Candidats.Include(c=>c.candidatures).ThenInclude(c=>c.offre)
+                                              .Where(c=>c.Id==id).FirstOrDefault();
+          //  return Ok(new { candidat });
+            return  candidat;
+            
         }
 
         // PUT: api/Candidats/5
@@ -177,7 +158,7 @@ namespace ApplicationTEST.Controllers
             var user = await GetCandidat(id);
             if (user != null)
             {
-                var languages =  _context.Langues.Where(l => l.candidat == user);
+                var languages =  user.Langue;
                         
                 
                 return Ok(new
@@ -215,10 +196,14 @@ namespace ApplicationTEST.Controllers
             var user = await GetCandidat(id);
             if (user != null)
             {
-                var exps = _context.Experience_prof.Where(e => e.candidat == user);
+                var exps = user.Experience_prof;
                 return Ok(new
                 {
                     exps
+                });
+            }
+            return NotFound();
+        }
 
 
         //Update Langue 
@@ -246,16 +231,9 @@ namespace ApplicationTEST.Controllers
         //get Commentaire
 
 
-        [HttpGet]
+        /*[HttpGet]
         [Route("getCommentaire/{id}")]
         public async Task<IActionResult> GetCommentaire(string id)
-
-        //get experiences
-
-        [HttpGet]
-        [Route("getExperiences/{id}")]
-        public async Task<IActionResult> GetExps(string id)
-
         {
             var user = await GetCandidat(id);
             if (user != null)
@@ -266,14 +244,14 @@ namespace ApplicationTEST.Controllers
                 {
                     cmt
 
-                var exps = _context.Experience_prof.Where(e => e.candidat == user);
-                return Ok(new
-                {
-                    exps
                 });
             }
             return NotFound();
         }
+        */
+        //get experiences
+
+       
         //delete experience
 
         [HttpDelete]
@@ -309,7 +287,6 @@ namespace ApplicationTEST.Controllers
                 });
             }
             return NotFound();
-
         }
 
         [HttpPost]
@@ -341,6 +318,11 @@ namespace ApplicationTEST.Controllers
                 _context.SaveChanges();
                 return Ok(new
                 {
+                    msg = "commentiare supprimé!"
+                });
+            }
+            return NotFound();
+        }
 
 
         //Update Experience 

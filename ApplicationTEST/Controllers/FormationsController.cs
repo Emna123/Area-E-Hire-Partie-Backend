@@ -33,7 +33,7 @@ namespace ApplicationTEST.Controllers
             var user = await userManager.FindByIdAsync(id);
             if (user != null)
             {
-                var formations = _context.Formations.Where(f => f.candidat == user);
+                var formations = user.Formation;
                 return Ok(new
                 {
                     formations
@@ -78,10 +78,6 @@ namespace ApplicationTEST.Controllers
         }
 
 
-        [HttpDelete]
-        [Route("DeleteFormation/{id}")]
-        public async Task<IActionResult> DelFormation(int id)
-
         //Update Formation 
         [HttpPut]
         [Route("UpdateFormation/{id}")]
@@ -90,11 +86,11 @@ namespace ApplicationTEST.Controllers
             var formation = await _context.Formations.FindAsync(id);
             if (formation != null)
             {
-                _context.Remove(formation);
+              /*  _context.Remove(formation);
                 _context.SaveChanges();
                 return Ok(new
                 {
-                    msg = "formation supprimée avec succée !"
+                    msg = "formation supprimée avec succée !"*/
                 formation.candidat = formation.candidat;
                 formation.universite = form.universite;
                 formation.diplome = form.diplome;

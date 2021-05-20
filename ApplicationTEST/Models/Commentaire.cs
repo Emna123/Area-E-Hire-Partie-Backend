@@ -12,6 +12,6 @@ namespace ApplicationTEST.Models
         public int id { get; set; }
         public string commentaire { get; set; }
         public DateTime date { get; set; }
-        public Candidat candidat { get; set; }
+        public virtual Candidat candidat { get; set; }
     }
 }

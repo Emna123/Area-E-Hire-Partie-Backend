@@ -15,14 +15,12 @@ namespace ApplicationTEST.Models
         [Column(TypeName = "varchar")]
         public string universite { get; set; }
         [Column]
-        public DateTime annee_debut { get; set; }
-        [Column]
-        public DateTime annee_fin { get; set; }
         public string annee_debut { get; set; }
         [Column]
         public string annee_fin { get; set; }
+        [Column]
         public string description { get; set; }
-        public Candidat candidat { get; set; }
-        public Generer generer {get; set;}   
+        public virtual Candidat candidat { get; set; }
+        public virtual Generer generer {get; set;}   
     }
 }

@@ -18,8 +18,8 @@ namespace ApplicationTEST.Models
         public String photo_profil { get; set; }
         [Column]
         public double salaire_min { get; set; }
-        public List<Formation> formations { get; set; } 
-       public List<Experience_prof> experience_profs { get; set; } 
+        public virtual List<Formation> formations { get; set; } 
+       public virtual List<Experience_prof> experience_profs { get; set; } 
        public virtual Candidat candidat {get; set;}
        public string  CandidatId  {get; set;}   
 

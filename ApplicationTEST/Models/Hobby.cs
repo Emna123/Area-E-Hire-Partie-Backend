@@ -11,7 +11,7 @@ namespace ApplicationTEST.Models
         [Key]
         public int id { get; set; }
         public string hobby { get; set; }
-        public Candidat candidat { get; set; }
+        public virtual Candidat candidat { get; set; }
 
     }
 }

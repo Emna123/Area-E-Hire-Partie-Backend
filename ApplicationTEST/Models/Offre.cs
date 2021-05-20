@@ -6,7 +6,8 @@ using System.Linq;
 using System.Threading.Tasks;
 
 namespace ApplicationTEST.Models
-{  
+{
+
     public class Offre
     {
 
@@ -19,8 +20,6 @@ namespace ApplicationTEST.Models
         {
             _lazyLoader = lazyLoader;
         }
-    public class Offre
-    {
         [Key]
         public int id { get; set; }
         public string titre { get; set; }
@@ -35,44 +34,46 @@ namespace ApplicationTEST.Models
         public string niveau_pro { get; set; }
         public Boolean archiver { get; set; }
 
+        public virtual ICollection<Candidature> Candidature { get; set; }
+        public virtual ICollection<Competence> Competence { get; set; }
+        public virtual ICollection<Langue> Langue { get; set; }
+        public virtual ICollection<Diplome> Diplome { get; set; }
+        public virtual ICollection<Questionnaire> Questionnaire { get; set; }
 
 
-        private ICollection<Candidature> _Candidature;
-        public ICollection<Candidature> Candidature
-        {
-            get => _lazyLoader.Load(this, ref _Candidature);
-            set => _Candidature = value;
-        }
+        /*   private ICollection<Candidature> _Candidature;
+           public ICollection<Candidature> Candidature
+           {
+               get => _lazyLoader.Load(this, ref _Candidature);
+               set => _Candidature = value;
+           }
 
+           */
+        /* private ICollection<Competence> _Competence;
+         public ICollection<Competence> Competence
+         {
+             get => _lazyLoader.Load(this, ref _Competence);
+             set => _Competence = value;
+         }
+         private ICollection<Langue> _Langue;
+         public ICollection<Langue> Langue
+         {
+             get => _lazyLoader.Load(this, ref _Langue);
+             set => _Langue = value;
+         }
+         private ICollection<Diplome> _Diplome;
+         public ICollection<Diplome> Diplome
+         {
+             get => _lazyLoader.Load(this, ref _Diplome);
+             set => _Diplome = value;
+         }
+         private ICollection<Questionnaire> _Questionnaire;
+         public ICollection<Questionnaire> Questionnaire
+         {
+             get => _lazyLoader.Load(this, ref _Questionnaire);
+             set => _Questionnaire = value;
+         }*/
 
-        private ICollection<Competence> _Competence;
-        public ICollection<Competence> Competence
-        {
-            get => _lazyLoader.Load(this, ref _Competence);
-            set => _Competence = value;
-        }
-        private ICollection<Langue> _Langue;
-        public ICollection<Langue> Langue
-        {
-            get => _lazyLoader.Load(this, ref _Langue);
-            set => _Langue = value;
-        }
-        private ICollection<Diplome> _Diplome;
-        public ICollection<Diplome> Diplome
-        {
-            get => _lazyLoader.Load(this, ref _Diplome);
-            set => _Diplome = value;
-        }
-        private ICollection<Questionnaire> _Questionnaire;
-        public ICollection<Questionnaire> Questionnaire
-        {
-            get => _lazyLoader.Load(this, ref _Questionnaire);
-            set => _Questionnaire = value;
-        }
-        public ICollection<Diplome> diplomes { get; set; }
-        public ICollection<Langue> langues { get; set; }
-        public ICollection<Competence> competences { get; set;}
-        public ICollection<Candidature> candidatures { get; set; }
 
     }
 }

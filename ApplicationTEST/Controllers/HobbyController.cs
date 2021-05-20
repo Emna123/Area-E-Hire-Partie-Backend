@@ -33,7 +33,7 @@ namespace ApplicationTEST.Controllers
             var user = await userManager.FindByIdAsync(id);
             if (user != null)
             {
-                var hobbies = _context.Hobbies.Where(h => h.candidat == user);
+                var hobbies = user.Hobby ;
                 return Ok(new
                 {
                     hobbies

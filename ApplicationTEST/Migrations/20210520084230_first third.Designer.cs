@@ -10,8 +10,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ApplicationTEST.Migrations
 {
     [DbContext(typeof(TodoContext))]
-    [Migration("20210411115112_linkedin11")]
-    partial class linkedin11
+    [Migration("20210520084230_first third")]
+    partial class firstthird
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -85,10 +85,22 @@ namespace ApplicationTEST.Migrations
                     b.Property<string>("adresse")
                         .HasColumnType("text");
 
-                    b.Property<string>("date_naissance")
-                        .HasColumnType("text");
+                    b.Property<bool>("archiver")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime>("date_naissance")
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("description")
+                        .HasColumnType("text");
+
+                    b.Property<string>("etat_matrimonial")
+                        .HasColumnType("text");
+
+                    b.Property<string>("genre")
+                        .HasColumnType("text");
+
+                    b.Property<string>("metier")
                         .HasColumnType("text");
 
                     b.Property<string>("nom")
@@ -112,6 +124,75 @@ namespace ApplicationTEST.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
+            modelBuilder.Entity("ApplicationTEST.Models.Candidature", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<bool>("archiver")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("candidatId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("date_candidature")
+                        .HasColumnType("text");
+
+                    b.Property<string>("email")
+                        .HasColumnType("text");
+
+                    b.Property<string>("etat")
+                        .HasColumnType("text");
+
+                    b.Property<string>("lettre_motivation")
+                        .HasColumnType("text");
+
+                    b.Property<string>("nom")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("offreid")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("prenom")
+                        .HasColumnType("text");
+
+                    b.Property<string>("salaire_demande")
+                        .HasColumnType("text");
+
+                    b.HasKey("id");
+
+                    b.HasIndex("candidatId");
+
+                    b.HasIndex("offreid");
+
+                    b.ToTable("Candidature");
+                });
+
+            modelBuilder.Entity("ApplicationTEST.Models.Commentaire", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<string>("candidatId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("commentaire")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("date")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.HasKey("id");
+
+                    b.HasIndex("candidatId");
+
+                    b.ToTable("Commentaire");
+                });
+
             modelBuilder.Entity("ApplicationTEST.Models.Competence", b =>
                 {
                     b.Property<int>("id")
@@ -125,6 +206,12 @@ namespace ApplicationTEST.Migrations
                     b.Property<string>("niveau")
                         .HasColumnType("text");
 
+                    b.Property<int?>("offreid")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("require")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("titre")
                         .HasColumnType("text");
 
@@ -132,7 +219,35 @@ namespace ApplicationTEST.Migrations
 
                     b.HasIndex("candidatId");
 
-                    b.ToTable("Competences");
+                    b.HasIndex("offreid");
+
+                    b.ToTable("Competence");
+                });
+
+            modelBuilder.Entity("ApplicationTEST.Models.Diplome", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<string>("description")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("offreid")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("require")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("titre")
+                        .HasColumnType("text");
+
+                    b.HasKey("id");
+
+                    b.HasIndex("offreid");
+
+                    b.ToTable("Diplome");
                 });
 
             modelBuilder.Entity("ApplicationTEST.Models.Experience_prof", b =>
@@ -212,7 +327,7 @@ namespace ApplicationTEST.Migrations
 
                     b.HasIndex("id_generer");
 
-                    b.ToTable("Formations");
+                    b.ToTable("Formation");
                 });
 
             modelBuilder.Entity("ApplicationTEST.Models.Generer", b =>
@@ -239,7 +354,8 @@ namespace ApplicationTEST.Migrations
 
                     b.HasKey("id_generer");
 
-                    b.HasIndex("CandidatId");
+                    b.HasIndex("CandidatId")
+                        .IsUnique();
 
                     b.ToTable("Generer");
                 });
@@ -280,9 +396,17 @@ namespace ApplicationTEST.Migrations
                     b.Property<string>("niveau")
                         .HasColumnType("text");
 
+                    b.Property<int?>("offreid")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("require")
+                        .HasColumnType("boolean");
+
                     b.HasKey("id");
 
                     b.HasIndex("candidatId");
+
+                    b.HasIndex("offreid");
 
                     b.ToTable("Langues");
                 });
@@ -306,6 +430,77 @@ namespace ApplicationTEST.Migrations
                         .IsUnique();
 
                     b.ToTable("Linkedins");
+                });
+
+            modelBuilder.Entity("ApplicationTEST.Models.Offre", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<string>("annee_exp")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("archiver")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("date_expiration")
+                        .HasColumnType("text");
+
+                    b.Property<string>("date_publication")
+                        .HasColumnType("text");
+
+                    b.Property<string>("description")
+                        .HasColumnType("text");
+
+                    b.Property<string>("lieu_travail")
+                        .HasColumnType("text");
+
+                    b.Property<string>("nbr_poste")
+                        .HasColumnType("text");
+
+                    b.Property<string>("niveau_pro")
+                        .HasColumnType("text");
+
+                    b.Property<string>("titre")
+                        .HasColumnType("text");
+
+                    b.Property<string>("type_contrat")
+                        .HasColumnType("text");
+
+                    b.Property<string>("type_offre")
+                        .HasColumnType("text");
+
+                    b.HasKey("id");
+
+                    b.ToTable("Offre");
+                });
+
+            modelBuilder.Entity("ApplicationTEST.Models.Questionnaire", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<string>("description")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("offreid")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("require")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("titre")
+                        .HasColumnType("text");
+
+                    b.HasKey("id");
+
+                    b.HasIndex("offreid");
+
+                    b.ToTable("Questionnaire");
                 });
 
             modelBuilder.Entity("ApplicationTEST.Models.Responsable_RH", b =>
@@ -461,19 +656,62 @@ namespace ApplicationTEST.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("ApplicationTEST.Models.Competence", b =>
+            modelBuilder.Entity("ApplicationTEST.Models.Candidature", b =>
                 {
                     b.HasOne("ApplicationTEST.Models.Candidat", "candidat")
-                        .WithMany("competences")
+                        .WithMany("candidatures")
+                        .HasForeignKey("candidatId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("ApplicationTEST.Models.Offre", "offre")
+                        .WithMany("Candidature")
+                        .HasForeignKey("offreid")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("candidat");
+
+                    b.Navigation("offre");
+                });
+
+            modelBuilder.Entity("ApplicationTEST.Models.Commentaire", b =>
+                {
+                    b.HasOne("ApplicationTEST.Models.Candidat", "candidat")
+                        .WithMany("Commentaire")
                         .HasForeignKey("candidatId");
 
                     b.Navigation("candidat");
                 });
 
+            modelBuilder.Entity("ApplicationTEST.Models.Competence", b =>
+                {
+                    b.HasOne("ApplicationTEST.Models.Candidat", "candidat")
+                        .WithMany("Competence")
+                        .HasForeignKey("candidatId");
+
+                    b.HasOne("ApplicationTEST.Models.Offre", "offre")
+                        .WithMany("Competence")
+                        .HasForeignKey("offreid")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("candidat");
+
+                    b.Navigation("offre");
+                });
+
+            modelBuilder.Entity("ApplicationTEST.Models.Diplome", b =>
+                {
+                    b.HasOne("ApplicationTEST.Models.Offre", "offre")
+                        .WithMany("Diplome")
+                        .HasForeignKey("offreid")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("offre");
+                });
+
             modelBuilder.Entity("ApplicationTEST.Models.Experience_prof", b =>
                 {
                     b.HasOne("ApplicationTEST.Models.Candidat", "candidat")
-                        .WithMany("experiences")
+                        .WithMany("Experience_prof")
                         .HasForeignKey("candidatId");
 
                     b.HasOne("ApplicationTEST.Models.Generer", "generer")
@@ -488,7 +726,7 @@ namespace ApplicationTEST.Migrations
             modelBuilder.Entity("ApplicationTEST.Models.Formation", b =>
                 {
                     b.HasOne("ApplicationTEST.Models.Candidat", "candidat")
-                        .WithMany("formations")
+                        .WithMany("Formation")
                         .HasForeignKey("candidatId");
 
                     b.HasOne("ApplicationTEST.Models.Generer", "generer")
@@ -503,8 +741,8 @@ namespace ApplicationTEST.Migrations
             modelBuilder.Entity("ApplicationTEST.Models.Generer", b =>
                 {
                     b.HasOne("ApplicationTEST.Models.Candidat", "candidat")
-                        .WithMany()
-                        .HasForeignKey("CandidatId");
+                        .WithOne("generer")
+                        .HasForeignKey("ApplicationTEST.Models.Generer", "CandidatId");
 
                     b.Navigation("candidat");
                 });
@@ -512,7 +750,7 @@ namespace ApplicationTEST.Migrations
             modelBuilder.Entity("ApplicationTEST.Models.Hobby", b =>
                 {
                     b.HasOne("ApplicationTEST.Models.Candidat", "candidat")
-                        .WithMany("hobbies")
+                        .WithMany("Hobby")
                         .HasForeignKey("candidatId");
 
                     b.Navigation("candidat");
@@ -521,10 +759,17 @@ namespace ApplicationTEST.Migrations
             modelBuilder.Entity("ApplicationTEST.Models.Langue", b =>
                 {
                     b.HasOne("ApplicationTEST.Models.Candidat", "candidat")
-                        .WithMany("langues")
+                        .WithMany("Langue")
                         .HasForeignKey("candidatId");
 
+                    b.HasOne("ApplicationTEST.Models.Offre", "offre")
+                        .WithMany("Langue")
+                        .HasForeignKey("offreid")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.Navigation("candidat");
+
+                    b.Navigation("offre");
                 });
 
             modelBuilder.Entity("ApplicationTEST.Models.Linkedin", b =>
@@ -534,6 +779,16 @@ namespace ApplicationTEST.Migrations
                         .HasForeignKey("ApplicationTEST.Models.Linkedin", "id_candidat");
 
                     b.Navigation("candidat");
+                });
+
+            modelBuilder.Entity("ApplicationTEST.Models.Questionnaire", b =>
+                {
+                    b.HasOne("ApplicationTEST.Models.Offre", "offre")
+                        .WithMany("Questionnaire")
+                        .HasForeignKey("offreid")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("offre");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -589,15 +844,21 @@ namespace ApplicationTEST.Migrations
 
             modelBuilder.Entity("ApplicationTEST.Models.Candidat", b =>
                 {
-                    b.Navigation("competences");
+                    b.Navigation("candidatures");
 
-                    b.Navigation("experiences");
+                    b.Navigation("Commentaire");
 
-                    b.Navigation("formations");
+                    b.Navigation("Competence");
 
-                    b.Navigation("hobbies");
+                    b.Navigation("Experience_prof");
 
-                    b.Navigation("langues");
+                    b.Navigation("Formation");
+
+                    b.Navigation("generer");
+
+                    b.Navigation("Hobby");
+
+                    b.Navigation("Langue");
 
                     b.Navigation("linkedin");
                 });
@@ -607,6 +868,19 @@ namespace ApplicationTEST.Migrations
                     b.Navigation("experience_profs");
 
                     b.Navigation("formations");
+                });
+
+            modelBuilder.Entity("ApplicationTEST.Models.Offre", b =>
+                {
+                    b.Navigation("Candidature");
+
+                    b.Navigation("Competence");
+
+                    b.Navigation("Diplome");
+
+                    b.Navigation("Langue");
+
+                    b.Navigation("Questionnaire");
                 });
 #pragma warning restore 612, 618
         }

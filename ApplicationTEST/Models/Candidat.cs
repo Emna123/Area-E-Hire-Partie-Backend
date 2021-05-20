@@ -37,74 +37,67 @@ namespace ApplicationTEST.Models
         public string etat_matrimonial { get; set; }
         public string adresse { get; set; }
         public string metier { get; set; }
-        public virtual Generer generer {get; set;}
+        //public  Generer generer {get; set;}
 
-        private ICollection<Candidature> _Candidature;
-        public ICollection<Candidature> Candidature
-        {
-            get => _lazyLoader.Load(this, ref _Candidature);
-            set => _Candidature = value;
-        }
-        private ICollection<Langue> _Langue;
-        public ICollection<Langue>  Langue {
-            get => _lazyLoader.Load(this, ref _Langue);
-            set => _Langue = value;
-        }
-
-
-        private ICollection<Experience_prof> _Experience_prof;
-        public ICollection<Experience_prof> Experience_prof {
-            get => _lazyLoader.Load(this, ref _Experience_prof);
-            set => _Experience_prof = value;
-        }
+        /*  private ICollection<Candidature> _Candidature;
+          public ICollection<Candidature> Candidature
+          {
+              get => _lazyLoader.Load(this, ref _Candidature);
+              set => _Candidature = value;
+          }
+          private ICollection<Langue> _Langue;
+          public ICollection<Langue>  Langue {
+              get => _lazyLoader.Load(this, ref _Langue);
+              set => _Langue = value;
+          }
 
 
+          private ICollection<Experience_prof> _Experience_prof;
+          public ICollection<Experience_prof> Experience_prof {
+              get => _lazyLoader.Load(this, ref _Experience_prof);
+              set => _Experience_prof = value;
+          }
 
 
-        private ICollection<Competence> _Competence;
-        public ICollection<Competence> Competence
-        {
-            get => _lazyLoader.Load(this, ref _Competence);
-            set => _Competence = value;
-        }
+          private ICollection<Competence> _Competence;
+          public  ICollection<Competence> Competence
+          {
+              get => _lazyLoader.Load(this, ref _Competence);
+              set => _Competence = value;
+          }
 
 
-       private ICollection<Hobby> _Hobby;
-        public ICollection<Hobby> Hobby
-        {
-            get => _lazyLoader.Load(this, ref _Hobby);
-            set => _Hobby = value;
-        }
-        
-        private ICollection<Formation> _Formation;
-        public ICollection<Formation> Formation
-        {
-            get => _lazyLoader.Load(this, ref _Formation);
-            set => _Formation = value;
-        }
-        private ICollection<Commentaire> _Commentaire;
-        public ICollection<Commentaire> Commentaire
-        {
-            get => _lazyLoader.Load(this, ref _Commentaire);
-            set => _Commentaire = value;
-        }
+         private ICollection<Hobby> _Hobby;
+          public ICollection<Hobby> Hobby
+          {
+              get => _lazyLoader.Load(this, ref _Hobby);
+              set => _Hobby = value;
+          }
 
-        
+          private ICollection<Formation> _Formation;
+          public ICollection<Formation> Formation
+          {
+              get => _lazyLoader.Load(this, ref _Formation);
+              set => _Formation = value;
+          }
+          public ICollection<Commentaire> _Commentaire;
+          public ICollection<Commentaire> Commentaire
+          {
+              get => _lazyLoader.Load(this, ref _Commentaire);
+              set => _Commentaire = value;
+          }*/
+
         public string genre { get; set; }
-        public string metier { get; set; }
-        public string etat_matrimonial { get; set; }  
-        public string Photo { get; set; }
-        public string adresse { get; set; }
-        public string date_naissance { get; set; }
         public string description { get; set; }
-        //public virtual Generer generer {get; set;} 
-        public  ICollection<Langue>langues { get;set; }
-        public ICollection<Experience_prof> experiences { get; set; }
-        public ICollection<Competence> competences { get; set; }
-        public ICollection<Hobby> hobbies { get; set; }
-        public ICollection<Formation> formations { get; set; }
-        public ICollection<Candidature> candidatures { get; set; }
-        public Linkedin linkedin { get; set; }
+        public virtual Generer generer {get; set;} 
+        public virtual ICollection<Langue> Langue { get;set; }
+        public virtual ICollection<Experience_prof> Experience_prof { get; set; }
+        public virtual ICollection<Competence> Competence { get; set; }
+        public virtual ICollection<Hobby> Hobby { get; set; }
+        public virtual ICollection<Formation> Formation { get; set; }
+        public virtual ICollection<Candidature> candidatures { get; set; }
+        public virtual ICollection<Commentaire> Commentaire { get; set; }
+        public virtual Linkedin linkedin { get; set; }
         //public int  GenererId  {get; set;}   
 
 

@@ -1,17 +1,14 @@
 using ApplicationTEST.Models;
 using MailKit.Net.Smtp;
-
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MimeKit;
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
 
 namespace ApplicationTEST.Controllers
 {
@@ -34,9 +31,6 @@ namespace ApplicationTEST.Controllers
         public async Task<IActionResult> AddCandidature(string id,int idoffre, [FromBody] Candidature candidature)
         {
             var user = await userManager.FindByIdAsync(id);
-
-            var offre = await _context.Offre.FindAsync(idoffre);
-
             var offre = await _context.Offres.FindAsync(idoffre);
             Console.WriteLine("Offre ", offre);
             if (user != null && offre != null)
@@ -45,8 +39,7 @@ namespace ApplicationTEST.Controllers
                 candidature.date_candidature = DateTime.Now.ToString();
                 candidature.etat = "en attente";
                 candidature.offre = offre;
-_context.Add(candidature);
-
+                _context.Add(candidature);
                 _context.Add(candidature);
                 _context.SaveChanges();
                 return Ok(new
@@ -55,7 +48,6 @@ _context.Add(candidature);
                 });
             }
             return NotFound();
-
         }
 
         [HttpGet]
@@ -63,23 +55,35 @@ _context.Add(candidature);
         public async Task<ActionResult<IEnumerable<Candidature>>> getAllCandidatures(string id)
         {
             var user = await userManager.FindByIdAsync(id);
-
-            var candidatures = _context.Candidature.
-                Where(e => e.candidat == user);
-
-            var candidatures = _context.Candidatures.Include(x => x.offre)
-                                                    .ThenInclude(x => x.diplomes)
-                                                    .Include(x => x.offre)
-                                                    .ThenInclude(x => x.competences)
-                                                    .Include(x => x.offre)
-                                                    .ThenInclude(x => x.langues)
-                                                    .Include(x => x.offre)
-                                                    .ThenInclude(x => x.candidatures).
-                                                     Where(e => e.candidat == user);
-            return Ok(new
+            if (user != null)
             {
-                candidatures = candidatures
-            });
+                var candidatures = user.candidatures;
+               //     .Include(x => x.offre).Where(e => e.candidat == user);
+                                                /*.ThenInclude(x => x.Diplome)
+                                                .Include(x => x.offre)
+                                                .ThenInclude(x => x.Competence)
+                                                .Include(x => x.offre)
+                                                .ThenInclude(x => x.Langue)
+                                                .Include(x => x.offre)
+                                                .ThenInclude(x => x.Candidature).
+                                                 ; ;*/
+                return Ok(new
+                {
+                    candidatures = candidatures
+                });
+            }
+            return NotFound();
+
+            /*.Include(x => x.offre)
+                                                .ThenInclude(x => x.diplomes)
+                                                .Include(x => x.offre)
+                                                .ThenInclude(x => x.competences)
+                                                .Include(x => x.offre)
+                                                .ThenInclude(x => x.langues)
+                                                .Include(x => x.offre)
+                                                .ThenInclude(x => x.candidatures).
+                                                 Where(e => e.candidat == user);*/
+
         }
 
         [HttpPost]
@@ -103,7 +107,17 @@ _context.Add(candidature);
             else
             {
                 message.Subject = "Nouvelle candidature pour le stage : " + metier;
-                message.Body = new TextPart(MimeKit.Text.TextFormat.Html) { Text = string.Format("<br/><br/><img src='{0}' style='height: 100px;width: 150px;margin-left: 200px;'/><hr style='color:#9B59B6;width: 500px;margin-left: 200px;'><br/>", "https://i.ibb.co/YfJg21W/i1.png") + string.Format("<p style='margin-left: 200px;font-size: 15px;color:black'>Bonjour,<br/>{0}</p>", "<p style='margin-left: 200px;color:black;width:550px'>Suite à votre postulation dans le site Area E-Hire sur l'offre " + "de stage" + " " + metier + ". Nous invite de passer un examen d'évolution en ligne Soyez prêt, nous vous informerons des détails plus tard !<p style='color:#110240;margin-left: 200px;'>Merci pour votre confiance,<br/>L' équipe Area E-Hire</p></p>") };
+                message.Body = new TextPart(MimeKit.Text.TextFormat.Html) { Text = string.Format("<br/><br/><img src='{0}' " +
+                    "style='height: 100px;width: 150px;margin-left: 200px;'/><hr style='color:#9B59B6;width: 500px;margin-left: 200px;'><br/>"
+                    , "https://i.ibb.co/YfJg21W/i1.png") + 
+                       string.Format("<p style='margin-left: 200px;font-size: 15px;color:black'>Bonjour,<br/>{0}</p>", 
+                       "<p style='margin-left: 200px;color:black;width:550px'>" +
+                       "Suite à votre postulation dans le site Area E-Hire sur l'offre "
+                    + "de stage" + " " + metier + "." +
+                    " Nous invite de passer un examen d'évolution en ligne Soyez prêt, " +
+                    "nous vous informerons des détails plus tard !" +
+                    "<p style='color:#110240;margin-left: 200px;'>Merci pour votre confiance,<br/>" +
+                    "L' équipe Area E-Hire</p></p>") };
             }
 
 
@@ -155,20 +169,17 @@ _context.Add(candidature);
         [Route("SendEmail/{email}")]
         public async Task<ActionResult<IEnumerable<Candidature>>> SendEmail(string email , Mess ms)
         {
-      
-
-    
-
-
             var message = new MimeMessage();
             message.From.Add(new MailboxAddress("area-e-hire  ", "areaehirer.recrutement@gmail.com"));
             message.To.Add(new MailboxAddress("", email));
-
             message.Subject = ms.Subject;
-                message.Body = new TextPart(MimeKit.Text.TextFormat.Html) { Text = string.Format("<br/><br/><img src='{0}' style='height: 100px;width: 150px;margin-left: 200px;'/><hr style='color:#9B59B6;width: 500px;margin-left: 200px;'><br/>", "https://i.ibb.co/YfJg21W/i1.png") + string.Format("<p style='margin-left: 200px;font-size: 15px;color:black';width:500px>{0}</p>", " <p style='margin-left: 200px;font-size: 15px;color:black;width:500px'> Bonjour,<br/><p style='margin-left: 200px;font-size: 15px;color:black;width:500px'>" + ms.Content+"</p></p><p style='color:#110240;margin-left: 200px;'>Merci pour votre confiance,<br/>L' équipe Area E-Hire</p>") };
-            
-
-
+            message.Body = new TextPart(MimeKit.Text.TextFormat.Html) { Text = string.Format("<br/><br/><img src='{0}' " +
+                "style='height: 100px;width: 150px;margin-left: 200px;'/><hr style='color:#9B59B6;width: 500px;margin-left: 200px;'><br/>",
+                "https://i.ibb.co/YfJg21W/i1.png") +
+                string.Format("<p style='margin-left: 200px;font-size: 15px;color:black';width:500px>{0}</p>", "" +
+                " <p style='margin-left: 200px;font-size: 15px;color:black;width:500px'> " +
+                "Bonjour,<br/><p style='margin-left: 200px;font-size: 15px;color:black;width:500px'>" + ms.Content+"" +
+                "</p></p><p style='color:#110240;margin-left: 200px;'>Merci pour votre confiance,<br/>L' équipe Area E-Hire</p>") };
             using (var client = new SmtpClient())
             {
                 client.Connect("smtp.gmail.com", 587, false);
@@ -181,20 +192,18 @@ _context.Add(candidature);
                 res = "message envoyé"
             });
         }
-        [HttpDelete]
+       /* [HttpDelete]
         [Route("DeleteCandidature/{id}")]
         public async Task<IActionResult> DelCompetence(long id)
         {
             var candidature = await _context.Candidature.FindAsync(id);
-
+        }*/
         [HttpDelete]
         [Route("deleteCandidature/{id}")]
         public async Task<ActionResult<IEnumerable<Candidature>>> deleteCandidature(int id)
         {
             // var user = await userManager.FindByIdAsync(id);
             var candidature = await _context.Candidatures.FindAsync(id);
-
-
             if (candidature != null)
             {
                 _context.Remove(candidature);
@@ -208,17 +217,7 @@ _context.Add(candidature);
             return NotFound();
         }
     }
- 
-
-                    message = "candidatures supprimée avec succés ! "
-                });
-            }
-            else
-            {
-                return NotFound();
-            }
+     
           
-        }
-    }
-
 }
+

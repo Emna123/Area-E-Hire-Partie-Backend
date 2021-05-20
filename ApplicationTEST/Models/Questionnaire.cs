@@ -12,7 +12,7 @@ namespace ApplicationTEST.Models
         public int id { get; set; }
         public string titre { get; set; }
         public string description { get; set; }
-        public Offre offre { get; set; }
+        public virtual Offre offre { get; set; }
         public Boolean require { get; set; }
 
     }

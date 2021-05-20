@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace ApplicationTEST.Migrations
 {
-    public partial class formation23 : Migration
+    public partial class firstsecond : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

@@ -37,11 +37,7 @@ namespace ApplicationTEST.Controllers
             var user = await userManager.FindByIdAsync(id);
             if (user != null)
             {
-
-                var comps = _context.Competence.Where(c => c.candidat == user);
-
-                var comps = _context.Competences.Where(c => c.candidat == user);
-
+                var comps = user.Competence;
                 return Ok(new
                 {
                     comps
@@ -52,7 +48,7 @@ namespace ApplicationTEST.Controllers
 
         [HttpPost]
         [Route("AddCompetence/{id}")]
-        public async Task<IActionResult> AddLangue(string id, [FromBody] Competence comp)
+        public async Task<IActionResult> AddCompetence(string id, [FromBody] Competence comp)
         {
             var user = await userManager.FindByIdAsync(id);
             if (user != null)
@@ -72,11 +68,7 @@ namespace ApplicationTEST.Controllers
         [Route("DeleteCompetence/{id}")]
         public async Task<IActionResult> DelCompetence(int id)
         {
-
-            var comp = await _context.Competence.FindAsync(id);
-
             var comp = await _context.Competences.FindAsync(id);
-
             if (comp != null)
             {
                 _context.Remove(comp);
@@ -119,8 +111,13 @@ namespace ApplicationTEST.Controllers
                 return Ok(new
                 {
                     msg = "competence supprimée avec succée !"
-        //Update Compétence 
-        [HttpPut]
+                });
+            }
+            return NotFound();
+        }
+
+            //Update Compétence 
+            [HttpPut]
         [Route("UpdateCompetence/{id}")]
         public async Task<IActionResult> UpdateCompt(int id, Competence comp)
         {
@@ -142,7 +139,6 @@ namespace ApplicationTEST.Controllers
 
         [HttpPut]
         [Route("PutOffreCompetence/{id}")]
-
         public async Task<ActionResult<Competence>> Putlangue(int id, Competence competence)
         {
             if (id != competence.id)
