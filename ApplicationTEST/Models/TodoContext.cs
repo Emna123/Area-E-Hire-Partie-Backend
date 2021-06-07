@@ -161,6 +161,6 @@ namespace ApplicationTEST.Models
         public DbSet<Result_Examen> Results_Examens { get; set; }
         public DbSet<Note_Question> Notes_Questions { get; set; }
         public DbSet<Question> Questions { get; set; }
-        public DbSet<Reponse> Responses { get; set; }
+        public DbSet<Reponse> Reponses { get; set; }
     }
 }
