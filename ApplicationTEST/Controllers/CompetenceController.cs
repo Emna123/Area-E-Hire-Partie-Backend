@@ -127,6 +127,7 @@ namespace ApplicationTEST.Controllers
                 competence.candidat = competence.candidat;
                 competence.titre = comp.titre;
                 competence.niveau = comp.niveau;
+                competence.value = comp.value;
                 _context.Entry(competence).State = EntityState.Modified;
                 _context.SaveChanges();
                 return Ok(new

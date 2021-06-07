@@ -10,9 +10,9 @@ namespace ApplicationTEST.Models
     {
         [Key]
         public int id { get; set; }
-        public double note_obtenue { get; set; }
+        //public double note_obtenue { get; set; }
+        //public virtual  Candidat candidat { get; set; }
         public virtual Examen examen { get; set; }
         public virtual Question question { get; set; }
-
     }
 }

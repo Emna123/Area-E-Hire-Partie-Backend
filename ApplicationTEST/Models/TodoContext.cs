@@ -101,10 +101,12 @@ namespace ApplicationTEST.Models
            .HasForeignKey<Linkedin>(c => c.id_candidat);
 
             modelBuilder.Entity<Examen>()
+
                      .HasOne(pt => pt.offre)
                      .WithOne(p => p.Examen)
                      .HasForeignKey<Examen>(e => e.id_offre)
                      .OnDelete(DeleteBehavior.Cascade);
+
 
             modelBuilder.Entity<Candidat>()
                   .HasMany(pt => pt.examenresults)
@@ -147,7 +149,6 @@ namespace ApplicationTEST.Models
 
         public DbSet<Candidat> Candidats { get; set; }
         public DbSet<Candidature> Candidature { get; set; }
-
         public DbSet<Responsable_RH> Responsable_RH { get; set; }
         public DbSet<Experience_prof> Experience_prof { get; set; }
         public DbSet<Formation> Formation { get; set; }
@@ -168,9 +169,12 @@ namespace ApplicationTEST.Models
         public DbSet<Candidature> Candidatures { get; set; }
 
 
+
         public DbSet<Examen> Examens { get; set; }
         public DbSet<Result_Examen> Results_Examens { get; set; }
         public DbSet<Note_Question> Note_Questions { get; set; }
+
+ 
         public DbSet<Reponse> Reponses { get; set; }
 
     }

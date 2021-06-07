@@ -4,7 +4,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace ApplicationTEST.Migrations
 {
-    public partial class MyFirstMigration : Migration
+    public partial class Migration28 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -33,10 +33,13 @@ namespace ApplicationTEST.Migrations
                     CVname = table.Column<string>(type: "text", nullable: true),
                     CVoriginalfilename = table.Column<string>(type: "text", nullable: true),
                     Photo = table.Column<string>(type: "text", nullable: true),
+                    archiver = table.Column<bool>(type: "boolean", nullable: false),
                     date_naissance = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     etat_matrimonial = table.Column<string>(type: "text", nullable: true),
                     adresse = table.Column<string>(type: "text", nullable: true),
                     metier = table.Column<string>(type: "text", nullable: true),
+                    genre = table.Column<string>(type: "text", nullable: true),
+                    description = table.Column<string>(type: "text", nullable: true),
                     UserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
@@ -55,6 +58,43 @@ namespace ApplicationTEST.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Offre",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    titre = table.Column<string>(type: "text", nullable: true),
+                    type_offre = table.Column<string>(type: "text", nullable: true),
+                    type_contrat = table.Column<string>(type: "text", nullable: true),
+                    lieu_travail = table.Column<string>(type: "text", nullable: true),
+                    nbr_poste = table.Column<string>(type: "text", nullable: true),
+                    annee_exp = table.Column<string>(type: "text", nullable: true),
+                    description = table.Column<string>(type: "text", nullable: true),
+                    date_publication = table.Column<string>(type: "text", nullable: true),
+                    date_expiration = table.Column<string>(type: "text", nullable: true),
+                    niveau_pro = table.Column<string>(type: "text", nullable: true),
+                    archiver = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Offre", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Questions",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    question = table.Column<string>(type: "text", nullable: true),
+                    note = table.Column<double>(type: "double precision", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Questions", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
@@ -213,27 +253,6 @@ namespace ApplicationTEST.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Competences",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    titre = table.Column<string>(type: "text", nullable: true),
-                    niveau = table.Column<string>(type: "text", nullable: true),
-                    candidatId = table.Column<string>(type: "text", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Competences", x => x.id);
-                    table.ForeignKey(
-                        name: "FK_Competences_AspNetUsers_candidatId",
-                        column: x => x.candidatId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Generer",
                 columns: table => new
                 {
@@ -277,6 +296,135 @@ namespace ApplicationTEST.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Linkedins",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    linkedin = table.Column<string>(type: "text", nullable: true),
+                    id_candidat = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Linkedins", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_Linkedins_AspNetUsers_id_candidat",
+                        column: x => x.id_candidat,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Candidature",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    etat = table.Column<string>(type: "text", nullable: true),
+                    nom = table.Column<string>(type: "text", nullable: true),
+                    prenom = table.Column<string>(type: "text", nullable: true),
+                    email = table.Column<string>(type: "text", nullable: true),
+                    date_candidature = table.Column<string>(type: "text", nullable: true),
+                    lettre_motivation = table.Column<string>(type: "text", nullable: true),
+                    salaire_demande = table.Column<string>(type: "text", nullable: true),
+                    archiver = table.Column<bool>(type: "boolean", nullable: false),
+                    candidatId = table.Column<string>(type: "text", nullable: true),
+                    offreid = table.Column<int>(type: "integer", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Candidature", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_Candidature_AspNetUsers_candidatId",
+                        column: x => x.candidatId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Candidature_Offre_offreid",
+                        column: x => x.offreid,
+                        principalTable: "Offre",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Competence",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    titre = table.Column<string>(type: "text", nullable: true),
+                    niveau = table.Column<string>(type: "text", nullable: true),
+                    value = table.Column<int>(type: "integer", nullable: false),
+                    candidatId = table.Column<string>(type: "text", nullable: true),
+                    require = table.Column<bool>(type: "boolean", nullable: false),
+                    offreid = table.Column<int>(type: "integer", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Competence", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_Competence_AspNetUsers_candidatId",
+                        column: x => x.candidatId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Competence_Offre_offreid",
+                        column: x => x.offreid,
+                        principalTable: "Offre",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Diplome",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    titre = table.Column<string>(type: "text", nullable: true),
+                    description = table.Column<string>(type: "text", nullable: true),
+                    require = table.Column<bool>(type: "boolean", nullable: false),
+                    offreid = table.Column<int>(type: "integer", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Diplome", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_Diplome_Offre_offreid",
+                        column: x => x.offreid,
+                        principalTable: "Offre",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Examens",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    titre = table.Column<string>(type: "text", nullable: true),
+                    nbr_questions = table.Column<int>(type: "integer", nullable: false),
+                    duree = table.Column<double>(type: "double precision", nullable: false),
+                    passed = table.Column<bool>(type: "boolean", nullable: false),
+                    id_offre = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Examens", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_Examens_Offre_id_offre",
+                        column: x => x.id_offre,
+                        principalTable: "Offre",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Langues",
                 columns: table => new
                 {
@@ -284,7 +432,10 @@ namespace ApplicationTEST.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     langue = table.Column<string>(type: "text", nullable: true),
                     niveau = table.Column<string>(type: "text", nullable: true),
-                    candidatId = table.Column<string>(type: "text", nullable: true)
+                    value = table.Column<int>(type: "integer", nullable: false),
+                    candidatId = table.Column<string>(type: "text", nullable: true),
+                    offreid = table.Column<int>(type: "integer", nullable: true),
+                    require = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -294,6 +445,55 @@ namespace ApplicationTEST.Migrations
                         column: x => x.candidatId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Langues_Offre_offreid",
+                        column: x => x.offreid,
+                        principalTable: "Offre",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Questionnaire",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    titre = table.Column<string>(type: "text", nullable: true),
+                    description = table.Column<string>(type: "text", nullable: true),
+                    offreid = table.Column<int>(type: "integer", nullable: true),
+                    require = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Questionnaire", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_Questionnaire_Offre_offreid",
+                        column: x => x.offreid,
+                        principalTable: "Offre",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Reponses",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    reponse = table.Column<string>(type: "text", nullable: true),
+                    correcte = table.Column<bool>(type: "boolean", nullable: false),
+                    questionid = table.Column<int>(type: "integer", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Reponses", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_Reponses_Questions_questionid",
+                        column: x => x.questionid,
+                        principalTable: "Questions",
+                        principalColumn: "id",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -338,8 +538,8 @@ namespace ApplicationTEST.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     diplome = table.Column<string>(type: "varchar", nullable: true),
                     universite = table.Column<string>(type: "varchar", nullable: true),
-                    annee_debut = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    annee_fin = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    annee_debut = table.Column<string>(type: "text", nullable: true),
+                    annee_fin = table.Column<string>(type: "text", nullable: true),
                     description = table.Column<string>(type: "text", nullable: true),
                     candidatId = table.Column<string>(type: "text", nullable: true),
                     id_generer = table.Column<int>(type: "integer", nullable: true)
@@ -359,6 +559,62 @@ namespace ApplicationTEST.Migrations
                         principalTable: "Generer",
                         principalColumn: "id_generer",
                         onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Note_Questions",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    examenid = table.Column<int>(type: "integer", nullable: true),
+                    questionid = table.Column<int>(type: "integer", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Note_Questions", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_Note_Questions_Examens_examenid",
+                        column: x => x.examenid,
+                        principalTable: "Examens",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Note_Questions_Questions_questionid",
+                        column: x => x.questionid,
+                        principalTable: "Questions",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Results_Examens",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    date_result = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    date_expiration = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    note_totale = table.Column<double>(type: "double precision", nullable: false),
+                    passed = table.Column<bool>(type: "boolean", nullable: false),
+                    candidatId = table.Column<string>(type: "text", nullable: true),
+                    examenid = table.Column<int>(type: "integer", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Results_Examens", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_Results_Examens_AspNetUsers_candidatId",
+                        column: x => x.candidatId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Results_Examens_Examens_examenid",
+                        column: x => x.examenid,
+                        principalTable: "Examens",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -399,14 +655,40 @@ namespace ApplicationTEST.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_Candidature_candidatId",
+                table: "Candidature",
+                column: "candidatId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Candidature_offreid",
+                table: "Candidature",
+                column: "offreid");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Commentaire_candidatId",
                 table: "Commentaire",
                 column: "candidatId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Competences_candidatId",
-                table: "Competences",
+                name: "IX_Competence_candidatId",
+                table: "Competence",
                 column: "candidatId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Competence_offreid",
+                table: "Competence",
+                column: "offreid");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Diplome_offreid",
+                table: "Diplome",
+                column: "offreid");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Examens_id_offre",
+                table: "Examens",
+                column: "id_offre",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Experience_prof_candidatId",
@@ -443,6 +725,47 @@ namespace ApplicationTEST.Migrations
                 name: "IX_Langues_candidatId",
                 table: "Langues",
                 column: "candidatId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Langues_offreid",
+                table: "Langues",
+                column: "offreid");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Linkedins_id_candidat",
+                table: "Linkedins",
+                column: "id_candidat",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Note_Questions_examenid",
+                table: "Note_Questions",
+                column: "examenid");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Note_Questions_questionid",
+                table: "Note_Questions",
+                column: "questionid");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Questionnaire_offreid",
+                table: "Questionnaire",
+                column: "offreid");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Reponses_questionid",
+                table: "Reponses",
+                column: "questionid");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Results_Examens_candidatId",
+                table: "Results_Examens",
+                column: "candidatId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Results_Examens_examenid",
+                table: "Results_Examens",
+                column: "examenid");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -463,10 +786,16 @@ namespace ApplicationTEST.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "Candidature");
+
+            migrationBuilder.DropTable(
                 name: "Commentaire");
 
             migrationBuilder.DropTable(
-                name: "Competences");
+                name: "Competence");
+
+            migrationBuilder.DropTable(
+                name: "Diplome");
 
             migrationBuilder.DropTable(
                 name: "Experience_prof");
@@ -481,7 +810,22 @@ namespace ApplicationTEST.Migrations
                 name: "Langues");
 
             migrationBuilder.DropTable(
+                name: "Linkedins");
+
+            migrationBuilder.DropTable(
+                name: "Note_Questions");
+
+            migrationBuilder.DropTable(
+                name: "Questionnaire");
+
+            migrationBuilder.DropTable(
+                name: "Reponses");
+
+            migrationBuilder.DropTable(
                 name: "Responsable_RH");
+
+            migrationBuilder.DropTable(
+                name: "Results_Examens");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
@@ -490,7 +834,16 @@ namespace ApplicationTEST.Migrations
                 name: "Generer");
 
             migrationBuilder.DropTable(
+                name: "Questions");
+
+            migrationBuilder.DropTable(
+                name: "Examens");
+
+            migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Offre");
         }
     }
 }

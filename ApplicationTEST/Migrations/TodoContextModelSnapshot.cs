@@ -213,6 +213,9 @@ namespace ApplicationTEST.Migrations
                     b.Property<string>("titre")
                         .HasColumnType("text");
 
+                    b.Property<int>("value")
+                        .HasColumnType("integer");
+
                     b.HasKey("id");
 
                     b.HasIndex("candidatId");
@@ -430,6 +433,9 @@ namespace ApplicationTEST.Migrations
                     b.Property<bool>("require")
                         .HasColumnType("boolean");
 
+                    b.Property<int>("value")
+                        .HasColumnType("integer");
+
                     b.HasKey("id");
 
                     b.HasIndex("candidatId");
@@ -469,9 +475,6 @@ namespace ApplicationTEST.Migrations
 
                     b.Property<int?>("examenid")
                         .HasColumnType("integer");
-
-                    b.Property<double>("note_obtenue")
-                        .HasColumnType("double precision");
 
                     b.Property<int?>("questionid")
                         .HasColumnType("integer");
@@ -679,6 +682,9 @@ namespace ApplicationTEST.Migrations
 
                     b.Property<double>("note_totale")
                         .HasColumnType("double precision");
+
+                    b.Property<bool>("passed")
+                        .HasColumnType("boolean");
 
                     b.HasKey("id");
 

@@ -10,8 +10,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ApplicationTEST.Migrations
 {
     [DbContext(typeof(TodoContext))]
-    [Migration("20210527094227_Migration13")]
-    partial class Migration13
+    [Migration("20210607221638_Migration28")]
+    partial class Migration28
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -215,6 +215,9 @@ namespace ApplicationTEST.Migrations
                     b.Property<string>("titre")
                         .HasColumnType("text");
 
+                    b.Property<int>("value")
+                        .HasColumnType("integer");
+
                     b.HasKey("id");
 
                     b.HasIndex("candidatId");
@@ -256,9 +259,6 @@ namespace ApplicationTEST.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
-
-                    b.Property<DateTime>("date_expiration")
-                        .HasColumnType("timestamp without time zone");
 
                     b.Property<double>("duree")
                         .HasColumnType("double precision");
@@ -435,6 +435,9 @@ namespace ApplicationTEST.Migrations
                     b.Property<bool>("require")
                         .HasColumnType("boolean");
 
+                    b.Property<int>("value")
+                        .HasColumnType("integer");
+
                     b.HasKey("id");
 
                     b.HasIndex("candidatId");
@@ -475,9 +478,6 @@ namespace ApplicationTEST.Migrations
                     b.Property<int?>("examenid")
                         .HasColumnType("integer");
 
-                    b.Property<double>("note_obtenue")
-                        .HasColumnType("double precision");
-
                     b.Property<int?>("questionid")
                         .HasColumnType("integer");
 
@@ -487,7 +487,7 @@ namespace ApplicationTEST.Migrations
 
                     b.HasIndex("questionid");
 
-                    b.ToTable("Notes_Examens");
+                    b.ToTable("Note_Questions");
                 });
 
             modelBuilder.Entity("ApplicationTEST.Models.Offre", b =>
@@ -542,9 +542,6 @@ namespace ApplicationTEST.Migrations
                         .HasColumnType("integer")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-                    b.Property<int?>("Examenid")
-                        .HasColumnType("integer");
-
                     b.Property<double>("note")
                         .HasColumnType("double precision");
 
@@ -552,8 +549,6 @@ namespace ApplicationTEST.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("id");
-
-                    b.HasIndex("Examenid");
 
                     b.ToTable("Questions");
                 });
@@ -678,6 +673,9 @@ namespace ApplicationTEST.Migrations
                     b.Property<string>("candidatId")
                         .HasColumnType("text");
 
+                    b.Property<DateTime>("date_expiration")
+                        .HasColumnType("timestamp without time zone");
+
                     b.Property<DateTime>("date_result")
                         .HasColumnType("timestamp without time zone");
 
@@ -686,6 +684,9 @@ namespace ApplicationTEST.Migrations
 
                     b.Property<double>("note_totale")
                         .HasColumnType("double precision");
+
+                    b.Property<bool>("passed")
+                        .HasColumnType("boolean");
 
                     b.HasKey("id");
 
@@ -880,13 +881,13 @@ namespace ApplicationTEST.Migrations
 
             modelBuilder.Entity("ApplicationTEST.Models.Examen", b =>
                 {
-                    b.HasOne("ApplicationTEST.Models.Offre", "Offre")
+                    b.HasOne("ApplicationTEST.Models.Offre", "offre")
                         .WithOne("Examen")
                         .HasForeignKey("ApplicationTEST.Models.Examen", "id_offre")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Offre");
+                    b.Navigation("offre");
                 });
 
             modelBuilder.Entity("ApplicationTEST.Models.Experience_prof", b =>
@@ -966,7 +967,8 @@ namespace ApplicationTEST.Migrations
                 {
                     b.HasOne("ApplicationTEST.Models.Examen", "examen")
                         .WithMany("notes_questions")
-                        .HasForeignKey("examenid");
+                        .HasForeignKey("examenid")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("ApplicationTEST.Models.Question", "question")
                         .WithMany("notes_questions")
@@ -975,13 +977,6 @@ namespace ApplicationTEST.Migrations
                     b.Navigation("examen");
 
                     b.Navigation("question");
-                });
-
-            modelBuilder.Entity("ApplicationTEST.Models.Question", b =>
-                {
-                    b.HasOne("ApplicationTEST.Models.Examen", null)
-                        .WithMany("Questions")
-                        .HasForeignKey("Examenid");
                 });
 
             modelBuilder.Entity("ApplicationTEST.Models.Questionnaire", b =>
@@ -998,8 +993,7 @@ namespace ApplicationTEST.Migrations
                 {
                     b.HasOne("ApplicationTEST.Models.Question", "question")
                         .WithMany("reponses")
-                        .HasForeignKey("questionid")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasForeignKey("questionid");
 
                     b.Navigation("question");
                 });
@@ -1012,7 +1006,8 @@ namespace ApplicationTEST.Migrations
 
                     b.HasOne("ApplicationTEST.Models.Examen", "examen")
                         .WithMany("examenresults")
-                        .HasForeignKey("examenid");
+                        .HasForeignKey("examenid")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("candidat");
 
@@ -1098,8 +1093,6 @@ namespace ApplicationTEST.Migrations
                     b.Navigation("examenresults");
 
                     b.Navigation("notes_questions");
-
-                    b.Navigation("Questions");
                 });
 
             modelBuilder.Entity("ApplicationTEST.Models.Generer", b =>

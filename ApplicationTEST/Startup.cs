@@ -12,6 +12,7 @@ using System.Text;
 using Microsoft.Extensions.FileProviders;
 using System.IO;
 using EmailService;
+using System;
 
 namespace ApplicationTEST
 {
@@ -28,22 +29,35 @@ namespace ApplicationTEST
         public void ConfigureServices(IServiceCollection services)
         {
             //services.AddDbContext<TodoContext>(opt =>opt.UseInMemoryDatabase("maa"));
+            services.AddControllersWithViews()
+                  .AddNewtonsoftJson(options =>
+
+                   options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+            );
             var emailConfig = Configuration
            .GetSection("EmailConfiguration")
             .Get<EmailConfiguration>();
             services.AddSingleton(emailConfig);
             services.AddScoped<IEmailSender, EmailSender>();
             //For entity framework
-            services.AddDbContext<TodoContext>(opt => opt.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddDbContext<TodoContext>(opt => opt.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"))
+            );
+            //.UseLazyLoadingProxies()
             //For Identity
-            /* services.AddIdentity<Candidat, IdentityRole>()
-                 .AddEntityFrameworkStores<TodoContext>()
-                 .AddDefaultTokenProviders();
-             services.AddIdentity<Responsable_RH, IdentityRole>()
-             .AddEntityFrameworkStores<TodoContext>()
-             .AddDefaultTokenProviders();*/
-            services.AddIdentityCore<Candidat>().AddRoles<IdentityRole>().AddEntityFrameworkStores<TodoContext>().AddDefaultTokenProviders();
-            services.AddIdentityCore<Responsable_RH>().AddRoles<IdentityRole>().AddEntityFrameworkStores<TodoContext>().AddDefaultTokenProviders();
+            services.AddIdentity<Candidat, IdentityRole>()
+                .AddEntityFrameworkStores<TodoContext>()
+                .AddDefaultTokenProviders();
+
+            var tokenvalidationparams = new TokenValidationParameters()
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidAudience = Configuration["JWT:ValidAudience"],
+                ValidIssuer = Configuration["JWT:ValidIssuer"],
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JWT:Secret"]))
+
+
+            };
             //Adding authentication
             services.AddAuthentication(options =>
             {
@@ -56,31 +70,24 @@ namespace ApplicationTEST
             {
                 options.SaveToken = true;
                 options.RequireHttpsMetadata = false;
-                options.SaveToken = true;
-                options.TokenValidationParameters = new TokenValidationParameters()
-                {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidAudience = Configuration["JWT:ValidAudience"],
-                    ValidIssuer = Configuration["JWT:ValidIssuer"],
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JWT:Secret"]))
-
-
-                };
+                // options.SaveToken = true;
+                options.TokenValidationParameters = tokenvalidationparams;
             });
-
+            services.AddSingleton(tokenvalidationparams);
             services.AddCors();
 
             services.AddControllers()
             .AddNewtonsoftJson(options =>
             options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
-);
+         );
+            services.Configure<DataProtectionTokenProviderOptions>(opt =>
+            opt.TokenLifespan = TimeSpan.FromHours(1));
 
         }
 
+        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -89,14 +96,14 @@ namespace ApplicationTEST
             {
                 FileProvider = new PhysicalFileProvider(Path.Combine(env.ContentRootPath, "wwwroot/uploads")),
                 RequestPath = "/Files",
-                
             });
+
             app.UseStaticFiles(new StaticFileOptions
             {
                 FileProvider = new PhysicalFileProvider(Path.Combine(env.ContentRootPath, "wwwroot/images")),
                 RequestPath = "/Photos",
-
             });
+
             /*var tokenValidationParameters = new TokenValidationParameters
             {
                 ValidateIssuerSigningKey = true,
@@ -118,6 +125,7 @@ namespace ApplicationTEST
                 .AllowAnyHeader()
                 .SetIsOriginAllowed(origin => true) // allow any origin
                 .AllowCredentials());
+
             app.UseAuthentication();
             app.UseAuthorization();
 

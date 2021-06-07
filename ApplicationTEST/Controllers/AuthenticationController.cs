@@ -15,6 +15,12 @@ using System.Web;
 using MimeKit;
 using MailKit.Net.Smtp;
 
+using System.Security.Cryptography;
+using Microsoft.AspNetCore.Authorization;
+using EmailService;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+
+
 namespace ApplicationTEST.Controllers
 {
     [Route("api/[controller]")]
@@ -242,6 +248,89 @@ namespace ApplicationTEST.Controllers
             return Ok(new Response { message = "User succefully added !", status = "success 200 " });
         }
 
+
+        //reset password user
+        [HttpPost]
+        [Route("ResetPassword")]
+        public async Task<IActionResult> checkEmailCandidat([FromBody] Response res)
+        {
+            try
+            {
+                var email = res.extrafield;
+                Candidat candidat = await userManager.FindByEmailAsync(email);
+                if(candidat != null)
+                {
+                    var token = await userManager.GeneratePasswordResetTokenAsync(candidat);
+                    token = HttpUtility.UrlEncode(token);
+                    var message = new MimeMessage();
+                    message.From.Add(new MailboxAddress("area-e-hire  ", "areaehirer.recrutement@gmail.com"));
+                    message.To.Add(new MailboxAddress("", email));
+                    message.Subject = " Changer votre mot de passe ";
+                    var chaine = " Bonjour " + candidat.nom.ToUpper() + " " + candidat.prenom +
+                        "! \n \n Pour changer votre mot de passe, veuillez utiliser le lien ci-dessous : \n http://localhost:3000/change-password?user_id="
+                          + candidat.Email+"&token="+token+ "\n Ce lien expirera dans une heure ! \n \n Merci pour votre confiance,\n L'équipe Area E-Hire";
+                    message.Body = new TextPart("plain")
+                    {
+                        Text = chaine.ToString()
+                    };
+                    using (var client = new SmtpClient())
+                    {
+                        client.Connect("smtp.gmail.com", 587, false);
+                        client.Authenticate("areaehirer.recrutement@gmail.com", "areaehire123");
+                        client.Send(message);
+                        client.Disconnect(true);
+                    }
+                    return Ok(new Response { message = "email succefully sent for recover !", status = "success 200 " });
+                }
+                else
+                {
+                    return NotFound();
+                }
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+
+        //change password 
+        [HttpPost]
+        [Route("ChangerUserPassword/{iduser}")]
+        public async Task<IActionResult> changePassword([FromBody] Response res,string iduser)
+        {
+            try
+            {
+                Console.WriteLine(res.message);
+                var candidat = await userManager.FindByEmailAsync(iduser);
+                if (candidat != null && res.message!=null)
+                {
+                    Console.WriteLine(res.extrafield);
+                 //   String hashedNewPassword = userManager.PasswordHasher.HashPassword(candidat,res.extrafield);
+                   // UserStore
+                    var result =  await userManager.ResetPasswordAsync(candidat, res.message, res.extrafield);
+                    Console.WriteLine("result!!!!!!!!"+result);
+                    if (result.Succeeded)
+                    {
+                        return Ok(new
+                        {
+                            msg = "Password changed succefully !"
+                        }); ;
+                    }
+                    else
+                    {
+                        return StatusCode(StatusCodes.Status500InternalServerError, new Response { message = "Error has been occured while changing the password!",status="500" });
+                    }
+                }
+                else
+                {
+                    return NotFound();
+                }
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
 
     }
 

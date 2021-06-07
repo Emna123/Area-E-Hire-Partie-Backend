@@ -46,7 +46,7 @@ namespace ApplicationTEST.Controllers
                 candidature.etat = "en attente";
                 candidature.offre = offre;
                 _context.Add(candidature);
-                _context.Add(candidature);
+               
                 _context.SaveChanges();
                 return Ok(new
                 {
@@ -107,7 +107,7 @@ namespace ApplicationTEST.Controllers
 
             var result_Examen = new Result_Examen();
 
-            result_Examen.date_expiration = DateTime.Now.AddDays(2);
+              result_Examen.date_expiration = DateTime.Now.AddDays(2);
                 result_Examen.candidat = candidature.candidat;
                result_Examen.examen = candidature.offre.Examen;
                 _context.Add(result_Examen);

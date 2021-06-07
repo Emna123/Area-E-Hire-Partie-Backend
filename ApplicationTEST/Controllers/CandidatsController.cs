@@ -8,11 +8,14 @@ using Microsoft.EntityFrameworkCore;
 using ApplicationTEST.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using MimeKit;
+using MailKit.Net.Smtp;
 
 
 namespace ApplicationTEST.Controllers
 
-{   [Authorize]
+{
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class CandidatsController : ControllerBase
@@ -20,7 +23,7 @@ namespace ApplicationTEST.Controllers
         private readonly TodoContext _context;
         private readonly UserManager<Candidat> userManager;
 
-        public CandidatsController(UserManager<Candidat> userManager,TodoContext context)
+        public CandidatsController(UserManager<Candidat> userManager, TodoContext context)
         {
             _context = context;
             this.userManager = userManager;
@@ -36,13 +39,13 @@ namespace ApplicationTEST.Controllers
 
         // GET: api/Candidats/5
         [HttpGet("{id}")]
-        public  async Task<Candidat> GetCandidat(string id)
+        public async Task<Candidat> GetCandidat(string id)
         {
-            var candidat =  _context.Candidats.Include(c=>c.candidatures).ThenInclude(c=>c.offre)
-                                              .Where(c=>c.Id==id).FirstOrDefault();
-          //  return Ok(new { candidat });
-            return  candidat;
-            
+            var candidat = _context.Candidats.Include(c => c.candidatures).ThenInclude(c => c.offre)
+                                              .Where(c => c.Id == id).FirstOrDefault();
+            //  return Ok(new { candidat });
+            return candidat;
+
         }
 
         // PUT: api/Candidats/5
@@ -134,7 +137,7 @@ namespace ApplicationTEST.Controllers
         }
         [HttpPost]
         [Route("AddLanguage/{id}")]
-        public async Task<IActionResult> AddLangue( string id, [FromBody] Langue langue)
+        public async Task<IActionResult> AddLangue(string id, [FromBody] Langue langue)
         {
             var user = await GetCandidat(id);
             if (user != null)
@@ -144,7 +147,7 @@ namespace ApplicationTEST.Controllers
                 _context.SaveChanges();
                 return Ok(new
                 {
-                    langue=langue
+                    langue = langue
                 });
             }
             return NotFound();
@@ -158,12 +161,12 @@ namespace ApplicationTEST.Controllers
             var user = await GetCandidat(id);
             if (user != null)
             {
-                var languages =  user.Langue;
-                        
-                
+                var languages = user.Langue;
+
+
                 return Ok(new
                 {
-                   languages
+                    languages
                 });
             }
             return NotFound();
@@ -209,7 +212,7 @@ namespace ApplicationTEST.Controllers
         //Update Langue 
         [HttpPut]
         [Route("UpdateLanguage/{id}")]
-        public async Task<IActionResult> UpdateLangue(int id,Langue lang)
+        public async Task<IActionResult> UpdateLangue(int id, Langue lang)
         {
             var langue = await _context.Langues.FindAsync(id);
             if (langue != null)
@@ -217,6 +220,7 @@ namespace ApplicationTEST.Controllers
                 langue.candidat = langue.candidat;
                 langue.langue = lang.langue;
                 langue.niveau = lang.niveau;
+                langue.value = lang.value;
                 _context.Entry(langue).State = EntityState.Modified;
                 _context.SaveChanges();
                 return Ok(new
@@ -251,7 +255,7 @@ namespace ApplicationTEST.Controllers
         */
         //get experiences
 
-       
+
         //delete experience
 
         [HttpDelete]
@@ -301,7 +305,7 @@ namespace ApplicationTEST.Controllers
                 _context.SaveChanges();
                 return Ok(new
                 {
-                     commentaire
+                    commentaire
                 });
             }
             return NotFound();
@@ -351,7 +355,10 @@ namespace ApplicationTEST.Controllers
             }
             return NotFound();
         }
+       
     }
-  
+
+   
+
 
 }
