@@ -3,15 +3,17 @@ using System;
 using ApplicationTEST.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace ApplicationTEST.Migrations
 {
     [DbContext(typeof(TodoContext))]
-    partial class TodoContextModelSnapshot : ModelSnapshot
+    [Migration("20210529082303_last_update1")]
+    partial class last_update1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -213,9 +215,6 @@ namespace ApplicationTEST.Migrations
                     b.Property<string>("titre")
                         .HasColumnType("text");
 
-                    b.Property<int>("value")
-                        .HasColumnType("integer");
-
                     b.HasKey("id");
 
                     b.HasIndex("candidatId");
@@ -261,9 +260,6 @@ namespace ApplicationTEST.Migrations
                     b.Property<double>("duree")
                         .HasColumnType("double precision");
 
-                    b.Property<int>("id_offre")
-                        .HasColumnType("integer");
-
                     b.Property<int>("nbr_questions")
                         .HasColumnType("integer");
 
@@ -271,9 +267,6 @@ namespace ApplicationTEST.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("id");
-
-                    b.HasIndex("id_offre")
-                        .IsUnique();
 
                     b.ToTable("Examens");
                 });
@@ -430,9 +423,6 @@ namespace ApplicationTEST.Migrations
                     b.Property<bool>("require")
                         .HasColumnType("boolean");
 
-                    b.Property<int>("value")
-                        .HasColumnType("integer");
-
                     b.HasKey("id");
 
                     b.HasIndex("candidatId");
@@ -473,6 +463,9 @@ namespace ApplicationTEST.Migrations
                     b.Property<int?>("examenid")
                         .HasColumnType("integer");
 
+                    b.Property<double>("note_obtenue")
+                        .HasColumnType("double precision");
+
                     b.Property<int?>("questionid")
                         .HasColumnType("integer");
 
@@ -491,6 +484,9 @@ namespace ApplicationTEST.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<int?>("Examenid")
+                        .HasColumnType("integer");
 
                     b.Property<string>("annee_exp")
                         .HasColumnType("text");
@@ -526,6 +522,8 @@ namespace ApplicationTEST.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("id");
+
+                    b.HasIndex("Examenid");
 
                     b.ToTable("Offre");
                 });
@@ -836,17 +834,6 @@ namespace ApplicationTEST.Migrations
                     b.Navigation("offre");
                 });
 
-            modelBuilder.Entity("ApplicationTEST.Models.Examen", b =>
-                {
-                    b.HasOne("ApplicationTEST.Models.Offre", "offre")
-                        .WithOne("Examen")
-                        .HasForeignKey("ApplicationTEST.Models.Examen", "id_offre")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("offre");
-                });
-
             modelBuilder.Entity("ApplicationTEST.Models.Experience_prof", b =>
                 {
                     b.HasOne("ApplicationTEST.Models.Candidat", "candidat")
@@ -933,6 +920,15 @@ namespace ApplicationTEST.Migrations
                     b.Navigation("examen");
 
                     b.Navigation("question");
+                });
+
+            modelBuilder.Entity("ApplicationTEST.Models.Offre", b =>
+                {
+                    b.HasOne("ApplicationTEST.Models.Examen", "Examen")
+                        .WithMany("offres")
+                        .HasForeignKey("Examenid");
+
+                    b.Navigation("Examen");
                 });
 
             modelBuilder.Entity("ApplicationTEST.Models.Questionnaire", b =>
@@ -1049,6 +1045,8 @@ namespace ApplicationTEST.Migrations
                     b.Navigation("examenresults");
 
                     b.Navigation("notes_questions");
+
+                    b.Navigation("offres");
                 });
 
             modelBuilder.Entity("ApplicationTEST.Models.Generer", b =>
@@ -1065,8 +1063,6 @@ namespace ApplicationTEST.Migrations
                     b.Navigation("Competence");
 
                     b.Navigation("Diplome");
-
-                    b.Navigation("Examen");
 
                     b.Navigation("Langue");
 

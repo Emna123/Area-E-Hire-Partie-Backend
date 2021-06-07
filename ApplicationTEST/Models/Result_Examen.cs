@@ -12,6 +12,8 @@ namespace ApplicationTEST.Models
         public int id { get; set; }
         public DateTime date_result { get; set; }
         public double note_totale { get; set; }
+        public DateTime date_expiration  { get; set; }
+        public Boolean passed  { get; set; }
         public virtual Candidat candidat { get; set; }
         public virtual Examen examen { get; set; }
     }

@@ -3,15 +3,17 @@ using System;
 using ApplicationTEST.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace ApplicationTEST.Migrations
 {
     [DbContext(typeof(TodoContext))]
-    partial class TodoContextModelSnapshot : ModelSnapshot
+    [Migration("20210604171201_update_note_question_final1")]
+    partial class update_note_question_final1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -212,9 +214,6 @@ namespace ApplicationTEST.Migrations
 
                     b.Property<string>("titre")
                         .HasColumnType("text");
-
-                    b.Property<int>("value")
-                        .HasColumnType("integer");
 
                     b.HasKey("id");
 
@@ -429,9 +428,6 @@ namespace ApplicationTEST.Migrations
 
                     b.Property<bool>("require")
                         .HasColumnType("boolean");
-
-                    b.Property<int>("value")
-                        .HasColumnType("integer");
 
                     b.HasKey("id");
 

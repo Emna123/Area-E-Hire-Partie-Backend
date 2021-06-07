@@ -12,6 +12,7 @@ namespace ApplicationTEST.Models
         public int id {get;set;}
         public string langue { get; set; }
         public string niveau { get; set; }
+        public int value { get; set; }
         public virtual Candidat candidat { get; set; }
         public virtual Offre offre { get; set; }
         public Boolean require { get; set; }

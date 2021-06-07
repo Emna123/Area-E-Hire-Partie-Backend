@@ -40,7 +40,7 @@ namespace ApplicationTEST.Controllers
                 candidature.etat = "en attente";
                 candidature.offre = offre;
                 _context.Add(candidature);
-                _context.Add(candidature);
+               
                 _context.SaveChanges();
                 return Ok(new
                 {

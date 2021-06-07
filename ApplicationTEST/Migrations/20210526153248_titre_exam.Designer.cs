@@ -3,15 +3,17 @@ using System;
 using ApplicationTEST.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace ApplicationTEST.Migrations
 {
     [DbContext(typeof(TodoContext))]
-    partial class TodoContextModelSnapshot : ModelSnapshot
+    [Migration("20210526153248_titre_exam")]
+    partial class titre_exam
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -212,9 +214,6 @@ namespace ApplicationTEST.Migrations
 
                     b.Property<string>("titre")
                         .HasColumnType("text");
-
-                    b.Property<int>("value")
-                        .HasColumnType("integer");
 
                     b.HasKey("id");
 
@@ -430,9 +429,6 @@ namespace ApplicationTEST.Migrations
                     b.Property<bool>("require")
                         .HasColumnType("boolean");
 
-                    b.Property<int>("value")
-                        .HasColumnType("integer");
-
                     b.HasKey("id");
 
                     b.HasIndex("candidatId");
@@ -473,6 +469,9 @@ namespace ApplicationTEST.Migrations
                     b.Property<int?>("examenid")
                         .HasColumnType("integer");
 
+                    b.Property<double>("note_obtenue")
+                        .HasColumnType("double precision");
+
                     b.Property<int?>("questionid")
                         .HasColumnType("integer");
 
@@ -482,7 +481,7 @@ namespace ApplicationTEST.Migrations
 
                     b.HasIndex("questionid");
 
-                    b.ToTable("Notes_Questions");
+                    b.ToTable("Notes_Examens");
                 });
 
             modelBuilder.Entity("ApplicationTEST.Models.Offre", b =>
@@ -838,13 +837,13 @@ namespace ApplicationTEST.Migrations
 
             modelBuilder.Entity("ApplicationTEST.Models.Examen", b =>
                 {
-                    b.HasOne("ApplicationTEST.Models.Offre", "offre")
+                    b.HasOne("ApplicationTEST.Models.Offre", "Offre")
                         .WithOne("Examen")
                         .HasForeignKey("ApplicationTEST.Models.Examen", "id_offre")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("offre");
+                    b.Navigation("Offre");
                 });
 
             modelBuilder.Entity("ApplicationTEST.Models.Experience_prof", b =>

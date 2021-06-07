@@ -41,39 +41,6 @@ namespace ApplicationTEST.Models
         public virtual ICollection<Questionnaire> Questionnaire { get; set; }
         public virtual Examen  Examen { get; set; }
 
-        /*   private ICollection<Candidature> _Candidature;
-           public ICollection<Candidature> Candidature
-           {
-               get => _lazyLoader.Load(this, ref _Candidature);
-               set => _Candidature = value;
-           }
-
-           */
-        /* private ICollection<Competence> _Competence;
-         public ICollection<Competence> Competence
-         {
-             get => _lazyLoader.Load(this, ref _Competence);
-             set => _Competence = value;
-         }
-         private ICollection<Langue> _Langue;
-         public ICollection<Langue> Langue
-         {
-             get => _lazyLoader.Load(this, ref _Langue);
-             set => _Langue = value;
-         }
-         private ICollection<Diplome> _Diplome;
-         public ICollection<Diplome> Diplome
-         {
-             get => _lazyLoader.Load(this, ref _Diplome);
-             set => _Diplome = value;
-         }
-         private ICollection<Questionnaire> _Questionnaire;
-         public ICollection<Questionnaire> Questionnaire
-         {
-             get => _lazyLoader.Load(this, ref _Questionnaire);
-             set => _Questionnaire = value;
-         }*/
-
-
+       
     }
 }

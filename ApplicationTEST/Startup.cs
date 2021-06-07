@@ -12,6 +12,7 @@ using System.Text;
 using Microsoft.Extensions.FileProviders;
 using System.IO;
 using EmailService;
+using System;
 
 namespace ApplicationTEST
 {
@@ -79,6 +80,8 @@ namespace ApplicationTEST
             .AddNewtonsoftJson(options =>
             options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
          );
+            services.Configure<DataProtectionTokenProviderOptions>(opt =>
+            opt.TokenLifespan = TimeSpan.FromHours(1));
 
         }
 
@@ -93,8 +96,6 @@ namespace ApplicationTEST
             {
                 FileProvider = new PhysicalFileProvider(Path.Combine(env.ContentRootPath, "wwwroot/uploads")),
                 RequestPath = "/Files",
-
-                
             }) ;
 
             app.UseStaticFiles(new StaticFileOptions
@@ -124,6 +125,7 @@ namespace ApplicationTEST
                 .AllowAnyHeader()
                 .SetIsOriginAllowed(origin => true) // allow any origin
                 .AllowCredentials());
+
             app.UseAuthentication();
             app.UseAuthorization();
 

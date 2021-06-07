@@ -98,7 +98,6 @@ namespace ApplicationTEST.Models
         public virtual ICollection<Candidature> candidatures { get; set; }
         public virtual ICollection<Commentaire> Commentaire { get; set; }
         public virtual ICollection<Result_Examen> examenresults { get; set; }
-
         public virtual Linkedin linkedin { get; set; }
         //public int  GenererId  {get; set;}   
 

@@ -100,10 +100,10 @@ namespace ApplicationTEST.Models
            .WithOne(p => p.linkedin)
            .HasForeignKey<Linkedin>(c => c.id_candidat);
 
-            modelBuilder.Entity<Offre>()
-                   .HasOne(pt => pt.Examen)
-                   .WithOne(p => p.Offre)
-                   .HasForeignKey<Examen>(c => c.id_offre); ;
+            modelBuilder.Entity<Examen>()
+                   .HasOne(pt => pt.offre)
+                   .WithOne(p => p.Examen)
+                   .HasForeignKey<Examen>(e => e.id_offre);
 
             modelBuilder.Entity<Candidat>()
                   .HasMany(pt => pt.examenresults)
@@ -140,7 +140,6 @@ namespace ApplicationTEST.Models
 
         public DbSet<Candidat> Candidats { get; set; }
         public DbSet<Candidature> Candidature { get; set; }
-
         public DbSet<Responsable_RH> Responsable_RH { get; set; }
         public DbSet<Experience_prof> Experience_prof { get; set; }
         public DbSet<Formation> Formation { get; set; }
@@ -158,5 +157,10 @@ namespace ApplicationTEST.Models
         public DbSet<Diplome> Diplomes { get; set; }
         public DbSet<Offre> Offres { get; set; }
         public DbSet<Candidature> Candidatures { get; set; }
+        public DbSet<Examen> Examens { get; set; }
+        public DbSet<Result_Examen> Results_Examens { get; set; }
+        public DbSet<Note_Question> Notes_Questions { get; set; }
+        public DbSet<Question> Questions { get; set; }
+        public DbSet<Reponse> Responses { get; set; }
     }
 }

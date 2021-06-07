@@ -3,15 +3,17 @@ using System;
 using ApplicationTEST.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace ApplicationTEST.Migrations
 {
     [DbContext(typeof(TodoContext))]
-    partial class TodoContextModelSnapshot : ModelSnapshot
+    [Migration("20210604084955_idcandidat_note_question")]
+    partial class idcandidat_note_question
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -212,9 +214,6 @@ namespace ApplicationTEST.Migrations
 
                     b.Property<string>("titre")
                         .HasColumnType("text");
-
-                    b.Property<int>("value")
-                        .HasColumnType("integer");
 
                     b.HasKey("id");
 
@@ -430,9 +429,6 @@ namespace ApplicationTEST.Migrations
                     b.Property<bool>("require")
                         .HasColumnType("boolean");
 
-                    b.Property<int>("value")
-                        .HasColumnType("integer");
-
                     b.HasKey("id");
 
                     b.HasIndex("candidatId");
@@ -470,13 +466,21 @@ namespace ApplicationTEST.Migrations
                         .HasColumnType("integer")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
+                    b.Property<string>("candidatId")
+                        .HasColumnType("text");
+
                     b.Property<int?>("examenid")
                         .HasColumnType("integer");
+
+                    b.Property<double>("note_obtenue")
+                        .HasColumnType("double precision");
 
                     b.Property<int?>("questionid")
                         .HasColumnType("integer");
 
                     b.HasKey("id");
+
+                    b.HasIndex("candidatId");
 
                     b.HasIndex("examenid");
 
@@ -922,6 +926,10 @@ namespace ApplicationTEST.Migrations
 
             modelBuilder.Entity("ApplicationTEST.Models.Note_Question", b =>
                 {
+                    b.HasOne("ApplicationTEST.Models.Candidat", "candidat")
+                        .WithMany()
+                        .HasForeignKey("candidatId");
+
                     b.HasOne("ApplicationTEST.Models.Examen", "examen")
                         .WithMany("notes_questions")
                         .HasForeignKey("examenid");
@@ -929,6 +937,8 @@ namespace ApplicationTEST.Migrations
                     b.HasOne("ApplicationTEST.Models.Question", "question")
                         .WithMany("notes_questions")
                         .HasForeignKey("questionid");
+
+                    b.Navigation("candidat");
 
                     b.Navigation("examen");
 
