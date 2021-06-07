@@ -13,8 +13,12 @@ namespace ApplicationTEST.Models
         public string titre { get; set; }
         public int nbr_questions { get; set; }
         public double duree { get; set; }
+        public Boolean passed { get; set; }
+
         public virtual Offre offre  { get; set; }
+
         public int id_offre { get; set; }
+
         public virtual ICollection<Result_Examen> examenresults { get; set; }
         public virtual ICollection<Note_Question> notes_questions { get; set; }
 

@@ -101,9 +101,12 @@ namespace ApplicationTEST.Models
            .HasForeignKey<Linkedin>(c => c.id_candidat);
 
             modelBuilder.Entity<Examen>()
-                   .HasOne(pt => pt.offre)
-                   .WithOne(p => p.Examen)
-                   .HasForeignKey<Examen>(e => e.id_offre);
+
+                     .HasOne(pt => pt.offre)
+                     .WithOne(p => p.Examen)
+                     .HasForeignKey<Examen>(e => e.id_offre)
+                     .OnDelete(DeleteBehavior.Cascade);
+
 
             modelBuilder.Entity<Candidat>()
                   .HasMany(pt => pt.examenresults)
@@ -111,7 +114,9 @@ namespace ApplicationTEST.Models
 
             modelBuilder.Entity<Examen>()
                  .HasMany(pt => pt.examenresults)
-                 .WithOne(p => p.examen);
+                 .WithOne(p => p.examen)
+                 .OnDelete(DeleteBehavior.Cascade);
+
 
             modelBuilder.Entity<Question>()
                 .HasMany(pt => pt.notes_questions)
@@ -119,12 +124,16 @@ namespace ApplicationTEST.Models
 
             modelBuilder.Entity<Examen>()
                .HasMany(pt => pt.notes_questions)
-               .WithOne(p => p.examen);
+               .WithOne(p => p.examen)
+               .OnDelete(DeleteBehavior.Cascade);
+
+            /*  modelBuilder.Entity<Examen>()
+                .HasMany(pt => pt.Questions)
+                .WithOne(p => p.examen);*/
 
             modelBuilder.Entity<Question>()
                .HasMany(pt => pt.reponses)
-               .WithOne(p => p.question)
-               .OnDelete(DeleteBehavior.Restrict); 
+               .WithOne(p => p.question);
 
             /*    modelBuilder.Entity<Candidat>()
                        .HasOne(pt => pt.Examen)
@@ -152,15 +161,21 @@ namespace ApplicationTEST.Models
         public DbSet<Offre> Offre { get; set; }
         public DbSet<Diplome>Diplome { get; set; }
         public DbSet<Questionnaire> Questionnaire { get; set; }
+        public DbSet<Question> Questions { get; set; }
         public DbSet<Competence> Competences { get; set; }
         public DbSet<Linkedin> Linkedins { get; set; }
         public DbSet<Diplome> Diplomes { get; set; }
         public DbSet<Offre> Offres { get; set; }
         public DbSet<Candidature> Candidatures { get; set; }
+
+
+
         public DbSet<Examen> Examens { get; set; }
         public DbSet<Result_Examen> Results_Examens { get; set; }
-        public DbSet<Note_Question> Notes_Questions { get; set; }
-        public DbSet<Question> Questions { get; set; }
-        public DbSet<Reponse> Responses { get; set; }
+        public DbSet<Note_Question> Note_Questions { get; set; }
+
+ 
+        public DbSet<Reponse> Reponses { get; set; }
+
     }
 }

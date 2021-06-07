@@ -104,6 +104,33 @@ namespace ApplicationTEST.Controllers
 
             return await _context.Offre.FindAsync(id);
         }
+
+       /* [HttpDelete]
+        [Route("DeleteExamenOffre/{id}")]
+
+        public async Task<ActionResult<Offre>> DeleteExamenOffre(int id)
+        {
+            var offre= await _context.Offre.FindAsync(id);
+
+
+            if (offre != null)
+            {
+                //offre.Examen= null;
+                _context.Remove(offre.Examen);
+
+                await _context.SaveChangesAsync();
+
+                return Ok(new
+                {
+                    msg = "Examen supprimée avec succée !"
+                });
+            }
+            return NotFound();
+
+            ;
+        }
+       */
+
         [Authorize]
         // DELETE api/<OffreController>/5
         [HttpDelete]

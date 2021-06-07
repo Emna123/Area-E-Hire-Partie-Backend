@@ -267,6 +267,9 @@ namespace ApplicationTEST.Migrations
                     b.Property<int>("nbr_questions")
                         .HasColumnType("integer");
 
+                    b.Property<bool>("passed")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("titre")
                         .HasColumnType("text");
 
@@ -482,7 +485,7 @@ namespace ApplicationTEST.Migrations
 
                     b.HasIndex("questionid");
 
-                    b.ToTable("Notes_Questions");
+                    b.ToTable("Note_Questions");
                 });
 
             modelBuilder.Entity("ApplicationTEST.Models.Offre", b =>
@@ -594,28 +597,66 @@ namespace ApplicationTEST.Migrations
 
                     b.HasIndex("questionid");
 
-                    b.ToTable("Responses");
+                    b.ToTable("Reponses");
                 });
 
             modelBuilder.Entity("ApplicationTEST.Models.Responsable_RH", b =>
                 {
-                    b.Property<int>("id_resp")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasColumnType("text");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("UserName")
+                        .HasColumnType("text");
 
                     b.Property<int>("code")
                         .HasColumnType("integer");
 
-                    b.Property<string>("e_mail")
-                        .HasMaxLength(100)
-                        .HasColumnType("varchar");
+                    b.Property<string>("key")
+                        .HasColumnType("text");
 
                     b.Property<string>("mdp")
-                        .HasMaxLength(100)
-                        .HasColumnType("varchar");
+                        .HasColumnType("text");
 
-                    b.HasKey("id_resp");
+                    b.HasKey("Id");
 
                     b.ToTable("Responsable_RH");
                 });
@@ -924,7 +965,8 @@ namespace ApplicationTEST.Migrations
                 {
                     b.HasOne("ApplicationTEST.Models.Examen", "examen")
                         .WithMany("notes_questions")
-                        .HasForeignKey("examenid");
+                        .HasForeignKey("examenid")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("ApplicationTEST.Models.Question", "question")
                         .WithMany("notes_questions")
@@ -949,8 +991,7 @@ namespace ApplicationTEST.Migrations
                 {
                     b.HasOne("ApplicationTEST.Models.Question", "question")
                         .WithMany("reponses")
-                        .HasForeignKey("questionid")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasForeignKey("questionid");
 
                     b.Navigation("question");
                 });
@@ -963,7 +1004,8 @@ namespace ApplicationTEST.Migrations
 
                     b.HasOne("ApplicationTEST.Models.Examen", "examen")
                         .WithMany("examenresults")
-                        .HasForeignKey("examenid");
+                        .HasForeignKey("examenid")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("candidat");
 

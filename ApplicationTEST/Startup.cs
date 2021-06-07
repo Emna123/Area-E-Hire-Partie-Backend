@@ -31,7 +31,7 @@ namespace ApplicationTEST
             //services.AddDbContext<TodoContext>(opt =>opt.UseInMemoryDatabase("maa"));
             services.AddControllersWithViews()
                   .AddNewtonsoftJson(options =>
-                 
+
                    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
             );
             var emailConfig = Configuration
@@ -48,7 +48,7 @@ namespace ApplicationTEST
                 .AddEntityFrameworkStores<TodoContext>()
                 .AddDefaultTokenProviders();
 
-           var tokenvalidationparams = new TokenValidationParameters()
+            var tokenvalidationparams = new TokenValidationParameters()
             {
                 ValidateIssuer = true,
                 ValidateAudience = true,
@@ -74,8 +74,8 @@ namespace ApplicationTEST
                 options.TokenValidationParameters = tokenvalidationparams;
             });
             services.AddSingleton(tokenvalidationparams);
-        services.AddCors();
-          
+            services.AddCors();
+
             services.AddControllers()
             .AddNewtonsoftJson(options =>
             options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
@@ -96,7 +96,7 @@ namespace ApplicationTEST
             {
                 FileProvider = new PhysicalFileProvider(Path.Combine(env.ContentRootPath, "wwwroot/uploads")),
                 RequestPath = "/Files",
-            }) ;
+            });
 
             app.UseStaticFiles(new StaticFileOptions
             {
