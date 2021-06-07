@@ -14,65 +14,77 @@ namespace ApplicationTEST.Controllers
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class QuestionnaireController : Controller
+    public class QuestionController : Controller
     {
         private readonly TodoContext _context;
         private readonly UserManager<Candidat> userManager;
 
 
-        public QuestionnaireController(TodoContext context, UserManager<Candidat> userManager)
+        public QuestionController(TodoContext context, UserManager<Candidat> userManager)
         {
             this.userManager = userManager;
             _context = context;
         }
 
+        [HttpGet]
+        [Route("getAllQuestions")]
+        public async Task<ActionResult<IEnumerable<Question>>> GetQuestion()
+        {
+            return await _context.Questions.ToListAsync();
+   
+        }
 
         [HttpPost]
-        [Route("AddQuestionnaire/{id}")]
-        public async Task<IActionResult> AddQuestionnaire(int id, [FromBody] Questionnaire questionnaire)
+        [Route("AddQuestion/{id}")]
+        public async Task<IActionResult> AddQuestion(int id, [FromBody] Question question)
         {
-            var offre = await _context.Offre.FindAsync(id);
-            if (offre != null)
+            var noteq = new Note_Question();
+            var examen = await _context.Examens.FindAsync(id);
+
+            if (examen != null)
             {
-                questionnaire.offre = offre;
-                _context.Add(questionnaire);
+                noteq.examen = examen;
+                noteq.question = question;
+                _context.Add(question);
+                _context.Add(noteq);
+
                 _context.SaveChanges();
                 return Ok(new
                 {
-                   questionnaire
+                    question
                 });
             }
             return NotFound();
         }
 
         [HttpDelete]
-        [Route("DeleteQuestionnaire/{id}")]
+        [Route("DeleteQuestion/{id}")]
         public async Task<IActionResult> DelQuestionnaire(int id)
         {
-            var questionnaire = await _context.Questionnaire.FindAsync(id);
-            if (questionnaire != null)
+            var question = await _context.Questions.FindAsync(id);
+            if (question != null)
             {
-                _context.Remove(questionnaire);
+                _context.Remove(question);
                 _context.SaveChanges();
                 return Ok(new
                 {
-                    msg = "questionnaire supprimée avec succée !"
+                    msg = "question supprimée avec succée !"
                 });
             }
             return NotFound();
         }
 
         [HttpPut]
-        [Route("PutQuestionnaire/{id}")]
+        [Route("PutQuestion/{id}")]
 
-        public async Task<ActionResult<Questionnaire>> PutQuestionnaire(int id, Questionnaire questionnaire)
+        public async Task<ActionResult<Question>> PutQuestion(int id, Question question)
         {
-            if (id != questionnaire.id)
+            if (id != question.id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(questionnaire).State = EntityState.Modified;
+            _context.Entry(question).State = EntityState.Modified;
 
             try
             {
@@ -80,7 +92,7 @@ namespace ApplicationTEST.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (await _context.Questionnaire.FindAsync(id) == null)
+                if (await _context.Questions.FindAsync(id) == null)
                 {
                     return NotFound();
                 }
@@ -90,7 +102,7 @@ namespace ApplicationTEST.Controllers
                 }
             }
 
-            return await _context.Questionnaire.FindAsync(id);
+            return await _context.Questions.FindAsync(id);
 
 
         }

@@ -3,15 +3,17 @@ using System;
 using ApplicationTEST.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace ApplicationTEST.Migrations
 {
     [DbContext(typeof(TodoContext))]
-    partial class TodoContextModelSnapshot : ModelSnapshot
+    [Migration("20210531143904_Migration21")]
+    partial class Migration21
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -254,6 +256,9 @@ namespace ApplicationTEST.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<DateTime>("date_expiration")
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<double>("duree")
                         .HasColumnType("double precision");
@@ -667,9 +672,6 @@ namespace ApplicationTEST.Migrations
 
                     b.Property<string>("candidatId")
                         .HasColumnType("text");
-
-                    b.Property<DateTime>("date_expiration")
-                        .HasColumnType("timestamp without time zone");
 
                     b.Property<DateTime>("date_result")
                         .HasColumnType("timestamp without time zone");

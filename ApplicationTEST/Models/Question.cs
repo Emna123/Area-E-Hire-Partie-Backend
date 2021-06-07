@@ -15,6 +15,7 @@ namespace ApplicationTEST.Models
         public virtual ICollection<Note_Question> notes_questions { get; set; }
         public virtual ICollection<Reponse> reponses { get; set; }
 
+        //public virtual Examen examen { get; set; }
 
     }
 }

@@ -10,8 +10,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ApplicationTEST.Migrations
 {
     [DbContext(typeof(TodoContext))]
-    [Migration("20210520112258_first fifth")]
-    partial class firstfifth
+    [Migration("20210528034819_Migration18")]
+    partial class Migration18
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -257,6 +257,9 @@ namespace ApplicationTEST.Migrations
                         .HasColumnType("integer")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
+                    b.Property<DateTime>("date_expiration")
+                        .HasColumnType("timestamp without time zone");
+
                     b.Property<double>("duree")
                         .HasColumnType("double precision");
 
@@ -266,12 +269,18 @@ namespace ApplicationTEST.Migrations
                     b.Property<int>("nbr_questions")
                         .HasColumnType("integer");
 
+                    b.Property<bool>("passed")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("titre")
+                        .HasColumnType("text");
+
                     b.HasKey("id");
 
                     b.HasIndex("id_offre")
                         .IsUnique();
 
-                    b.ToTable("Examen");
+                    b.ToTable("Examens");
                 });
 
             modelBuilder.Entity("ApplicationTEST.Models.Experience_prof", b =>
@@ -478,7 +487,7 @@ namespace ApplicationTEST.Migrations
 
                     b.HasIndex("questionid");
 
-                    b.ToTable("Note_Question");
+                    b.ToTable("Note_Questions");
                 });
 
             modelBuilder.Entity("ApplicationTEST.Models.Offre", b =>
@@ -541,7 +550,7 @@ namespace ApplicationTEST.Migrations
 
                     b.HasKey("id");
 
-                    b.ToTable("Question");
+                    b.ToTable("Questions");
                 });
 
             modelBuilder.Entity("ApplicationTEST.Models.Questionnaire", b =>
@@ -590,28 +599,66 @@ namespace ApplicationTEST.Migrations
 
                     b.HasIndex("questionid");
 
-                    b.ToTable("Reponse");
+                    b.ToTable("Reponses");
                 });
 
             modelBuilder.Entity("ApplicationTEST.Models.Responsable_RH", b =>
                 {
-                    b.Property<int>("id_resp")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasColumnType("text");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("UserName")
+                        .HasColumnType("text");
 
                     b.Property<int>("code")
                         .HasColumnType("integer");
 
-                    b.Property<string>("e_mail")
-                        .HasMaxLength(100)
-                        .HasColumnType("varchar");
+                    b.Property<string>("key")
+                        .HasColumnType("text");
 
                     b.Property<string>("mdp")
-                        .HasMaxLength(100)
-                        .HasColumnType("varchar");
+                        .HasColumnType("text");
 
-                    b.HasKey("id_resp");
+                    b.HasKey("Id");
 
                     b.ToTable("Responsable_RH");
                 });
@@ -641,7 +688,7 @@ namespace ApplicationTEST.Migrations
 
                     b.HasIndex("examenid");
 
-                    b.ToTable("Result_Examen");
+                    b.ToTable("Results_Examens");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -939,8 +986,7 @@ namespace ApplicationTEST.Migrations
                 {
                     b.HasOne("ApplicationTEST.Models.Question", "question")
                         .WithMany("reponses")
-                        .HasForeignKey("questionid")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasForeignKey("questionid");
 
                     b.Navigation("question");
                 });
