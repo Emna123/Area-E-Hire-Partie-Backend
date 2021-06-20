@@ -134,8 +134,8 @@ namespace ApplicationTEST.Controllers
                        "<p style='margin-left: 200px;color:black;width:550px'>" +
                        "Suite à votre postulation dans le site Area E-Hire sur l'offre "
                     + "de stage" + " " + metier + "." +
-                    " Nous invite de passer un examen d'évolution en ligne. " +
-                    "Lien de l'Examen:" +
+                    " Nous vous invitons à passer un examen d'évolution en ligne. " +
+                    "Merci de consulter la section Mes candidatures de l'application" +
                     "<p style='color:#110240;margin-left: 200px;'>Merci pour votre confiance,<br/>" +
                     "L' équipe Area E-Hire</p></p>") };
             }
@@ -225,7 +225,8 @@ namespace ApplicationTEST.Controllers
             // var user = await userManager.FindByIdAsync(id);
             var candidature = await _context.Candidatures.FindAsync(id);
             if (candidature != null)
-            {
+            {        
+                _context.Remove(candidature);
                 _context.Remove(candidature);
                 _context.SaveChanges();
                 return Ok(new

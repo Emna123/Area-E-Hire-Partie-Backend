@@ -205,6 +205,7 @@ namespace ApplicationTEST.Controllers
                 };
 
                 foreach (var userRole in userRoles)
+
                 {
                     authClaims.Add(new Claim(ClaimTypes.Role, userRole));
                 }
@@ -213,7 +214,7 @@ namespace ApplicationTEST.Controllers
                 var token = new JwtSecurityToken(
                     issuer: _configuration["JWT:ValidIssuer"],
                     audience: _configuration["JWT:ValidAudience"],
-                    expires: DateTime.Now.AddHours(5),
+                    expires: DateTime.Now.AddHours(10),
                     //   claims = authClaims,
                     signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
                     );
@@ -235,8 +236,9 @@ namespace ApplicationTEST.Controllers
             var responsable_RH = await userManagerRH.FindByEmailAsync(model.Email);
             responsable_RH.mdp = model.mdp;
             responsable_RH.code = model.code;
-            var token = await userManagerRH.GeneratePasswordResetTokenAsync(responsable_RH);
-            await userManagerRH.ResetPasswordAsync(responsable_RH, token, model.mdp);
+            userManagerRH.RemovePasswordAsync(responsable_RH);
+
+            userManagerRH.AddPasswordAsync(responsable_RH, responsable_RH.mdp);
             var result = await userManagerRH.UpdateAsync(responsable_RH);
 
             if (!result.Succeeded)
@@ -250,47 +252,46 @@ namespace ApplicationTEST.Controllers
 
 
         //reset password user
-        [HttpPost]
+       [ HttpPost]
         [Route("ResetPassword")]
         public async Task<IActionResult> checkEmailCandidat([FromBody] Response res)
         {
-            try
+            var email = res.extrafield;
+
+            Console.WriteLine("this a message from reset password : " + email);
+
+            Candidat candidat = await userManager.FindByEmailAsync(email);
+            if (candidat != null)
             {
-                var email = res.extrafield;
-                Candidat candidat = await userManager.FindByEmailAsync(email);
-                if(candidat != null)
+                var token = await userManager.GeneratePasswordResetTokenAsync(candidat);
+                Console.WriteLine("this a message from reset password : " + token);
+
+                //token = HttpUtility.UrlEncode(token);
+                var message = new MimeMessage();
+                message.From.Add(new MailboxAddress("area-e-hire  ", "areaehirer.recrutement@gmail.com"));
+                message.To.Add(new MailboxAddress("", email));
+                message.Subject = " Changer votre mot de passe ";
+                var chaine = " Bonjour " + candidat.nom.ToUpper() + " " + candidat.prenom +
+                    "! \n \n Pour changer votre mot de passe, veuillez utiliser le lien ci-dessous : \n http://localhost:3000/change-password?user_id="
+                      + candidat.Email + "&token=" + token + "\n Ce lien expirera au bout d'une heure ! \n \n Merci pour votre confiance,\n L'équipe Area E-Hire";
+                message.Body = new TextPart("plain")
                 {
-                    var token = await userManager.GeneratePasswordResetTokenAsync(candidat);
-                    token = HttpUtility.UrlEncode(token);
-                    var message = new MimeMessage();
-                    message.From.Add(new MailboxAddress("area-e-hire  ", "areaehirer.recrutement@gmail.com"));
-                    message.To.Add(new MailboxAddress("", email));
-                    message.Subject = " Changer votre mot de passe ";
-                    var chaine = " Bonjour " + candidat.nom.ToUpper() + " " + candidat.prenom +
-                        "! \n \n Pour changer votre mot de passe, veuillez utiliser le lien ci-dessous : \n http://localhost:3000/change-password?user_id="
-                          + candidat.Email+"&token="+token+ "\n Ce lien expirera dans une heure ! \n \n Merci pour votre confiance,\n L'équipe Area E-Hire";
-                    message.Body = new TextPart("plain")
-                    {
-                        Text = chaine.ToString()
-                    };
-                    using (var client = new SmtpClient())
-                    {
-                        client.Connect("smtp.gmail.com", 587, false);
-                        client.Authenticate("areaehirer.recrutement@gmail.com", "areaehire123");
-                        client.Send(message);
-                        client.Disconnect(true);
-                    }
-                    return Ok(new Response { message = "email succefully sent for recover !", status = "success 200 " });
-                }
-                else
+                    Text = chaine.ToString()
+                };
+                using (var client = new SmtpClient())
                 {
-                    return NotFound();
+                    client.Connect("smtp.gmail.com", 587, false);
+                    client.Authenticate("areaehirer.recrutement@gmail.com", "areaehire123");
+                    client.Send(message);
+                    client.Disconnect(true);
                 }
+                return Ok(new Response { message = "email succefully sent for recover !", status = "success 200 " });
             }
-            catch
+            else
             {
-                return BadRequest();
+                return NotFound();
             }
+
         }
 
         //change password 

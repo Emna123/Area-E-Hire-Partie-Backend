@@ -47,7 +47,26 @@ namespace ApplicationTEST.Controllers
             return candidat;
 
         }
+        [HttpPut]
+        [Route("ArchiverCandidat/{id}")]
+        public async Task<IActionResult> ArchiverCandidat(string id, Candidat candidat)
 
+        {
+            var user = await userManager.FindByIdAsync(id);
+            if (user != null)
+            {
+                user.archiver = true;
+              
+                _context.Entry(user).State = EntityState.Modified;
+                _context.SaveChanges();
+                return Ok(new
+                {
+                    user = user
+                });
+            }
+            return NotFound();
+
+        }
         // PUT: api/Candidats/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
