@@ -29,13 +29,22 @@ namespace ApplicationTEST.Controllers
         [Route("getAllOffres")]
         public async Task<ActionResult<IEnumerable<Offre>>> GetOffres()
         {
-            return await _context.Offres.ToListAsync();
-            /*.Include(x => x.diplomes).
-                                        Include(x => x.langues).
-                                        Include(x => x.competences).
-                                        Include(x => x.candidatures).
-                                        //   Where(x=> Convert.ToDateTime(x.date_expiration) > Convert.ToDateTime(DateTime.Now.ToString())).
-                                        ToListAsync();*/
+            try
+            {
+                return await _context.Offres.ToListAsync();
+                /*.Include(x => x.diplomes).
+                                            Include(x => x.langues).
+                                            Include(x => x.competences).
+                                            Include(x => x.candidatures).
+                                            //   Where(x=> Convert.ToDateTime(x.date_expiration) > Convert.ToDateTime(DateTime.Now.ToString())).
+                                            ToListAsync();*/
+            }
+            catch
+            {
+                return BadRequest();
+            }
+
+
         }
 
         // GET api/<OffreController>/5
@@ -55,6 +64,23 @@ namespace ApplicationTEST.Controllers
             return offre;
           
         }
+
+        [HttpGet]
+        [Route("getOffreById/{id}")]
+
+        public async Task<ActionResult<Offre>> GetOffreById(int id)
+        {
+            var offre = await _context.Offre.FindAsync(id);
+
+            if (offre == null)
+            {
+                return null;
+            }
+
+            return offre;
+
+        }
+
         [Authorize]
         // POST api/<OffreController>
         [HttpPost]
@@ -104,6 +130,33 @@ namespace ApplicationTEST.Controllers
 
             return await _context.Offre.FindAsync(id);
         }
+
+       /* [HttpDelete]
+        [Route("DeleteExamenOffre/{id}")]
+
+        public async Task<ActionResult<Offre>> DeleteExamenOffre(int id)
+        {
+            var offre= await _context.Offre.FindAsync(id);
+
+
+            if (offre != null)
+            {
+                //offre.Examen= null;
+                _context.Remove(offre.Examen);
+
+                await _context.SaveChangesAsync();
+
+                return Ok(new
+                {
+                    msg = "Examen supprimée avec succée !"
+                });
+            }
+            return NotFound();
+
+            ;
+        }
+       */
+
         [Authorize]
         // DELETE api/<OffreController>/5
         [HttpDelete]

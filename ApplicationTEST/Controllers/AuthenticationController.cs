@@ -14,10 +14,12 @@ using System.Threading.Tasks;
 using System.Web;
 using MimeKit;
 using MailKit.Net.Smtp;
+
 using System.Security.Cryptography;
 using Microsoft.AspNetCore.Authorization;
 using EmailService;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+
 
 namespace ApplicationTEST.Controllers
 {
@@ -25,25 +27,34 @@ namespace ApplicationTEST.Controllers
     [ApiController]
     public class AuthenticationController : ControllerBase
     {
-        private readonly UserManager<Candidat> userManager;
+        private readonly UserManager<User> userManager;
+        private readonly UserManager<User> userManagerRH;
+
         private readonly RoleManager<IdentityRole> roleManager;
         private readonly IConfiguration _configuration;
         private readonly TodoContext _context;
-        private readonly SignInManager<Candidat> _signInManager;
 
 
-        public AuthenticationController(UserManager<Candidat> userManager, RoleManager<IdentityRole> roleManager,IConfiguration configuration, TodoContext context)
+        public AuthenticationController(UserManager<User> userManager,
+            RoleManager<IdentityRole> roleManager, 
+            IConfiguration configuration, TodoContext context, UserManager<User> userManagerRH)
         {
             this.userManager = userManager;
+            this.userManagerRH = userManagerRH;
             this.roleManager = roleManager;
             _context = context;
 
             _configuration = configuration;
         }
-       
+        /* public Sendmail()
+         {
+
+
+         }*/
+//
         [HttpPost]
         [Route("Register")]
-        public async Task<IActionResult> Register ([FromBody] Candidat model)
+        public async Task<IActionResult> Register([FromBody] Candidat model)
         {
             var userExist = await userManager.FindByEmailAsync(model.Email);
             var userbyusername = await userManager.FindByNameAsync(model.UserName);
@@ -68,30 +79,35 @@ namespace ApplicationTEST.Controllers
                 prenom = model.prenom,
                 password = model.password,
             };
-            var result = await userManager.CreateAsync(candidat,model.password);
+            var result = await userManager.CreateAsync(candidat, model.password);
             if (!result.Succeeded)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, new Response { message = "Error has been occured !", status = "Error 500 !!" });
             }
-            var emailtoken = await userManager.GenerateEmailConfirmationTokenAsync(candidat);
-           // emailtoken.wait();
-           // var confirmationLink = Url.Action(null, "Account", new { emailtoken, email = candidat.Email }, Request.Scheme);
-          //  var msg= new Message(new string[] { candidat.Email }, "Confirmation email link", confirmationLink, null);
+            bool x = await roleManager.RoleExistsAsync("User");
+            x = await roleManager.RoleExistsAsync("User");
+            if (!x)
+            {
+                var role = new IdentityRole();
+                role.Name = "User";
+                await roleManager.CreateAsync(role);
+            }
+
+            var result1 = await userManager.AddToRoleAsync(candidat, "User");
 
             var message = new MimeMessage();
+            var token = await userManager.GenerateEmailConfirmationTokenAsync(candidat);
+            token = HttpUtility.UrlEncode(token);
             message.From.Add(new MailboxAddress("area-e-hire  ", "areaehirer.recrutement@gmail.com"));
             message.To.Add(new MailboxAddress("", model.Email));
             message.Subject = "Confirmation Compte Area E-Hire";
-            Console.WriteLine(emailtoken);
-            var chaine = "Bonjour "+model.nom.ToUpper() + " " + model.prenom +"! \n Veuillez Confirmer votre compte" +
-                  " en cliquant sur ce lien :  \n http://localhost:3000/Inscription/Confirmation-compte?id="
-                  +candidat.Id+
-                  "&token="+emailtoken+""
-                  ;
+            var chaine = "Bonjour " + model.nom.ToUpper() + " " + model.prenom +
+                "! \n Veuillez Confirmer votre compte en cliquant sur ce lien \n " +
+                "http://localhost:3000/Inscription/Confirmation-compte?id=" + model.UserName +
+                "&token="+token;
             message.Body = new TextPart("plain")
             {
                 Text = chaine.ToString()
-
             };
             using (var client = new SmtpClient())
             {
@@ -100,81 +116,9 @@ namespace ApplicationTEST.Controllers
                 client.Send(message);
                 client.Disconnect(true);
             }
-            return Ok( new Response { message = "User succefully added !", status = "success 200 " });
+            return Ok(new Response { message = "User succefully added !", status = "success 200 " });
         }
 
-        public  string GetToken(Candidat user)
-        {
-           // var userRoles = await userManager.GetRolesAsync(user);
-            var authClaims = new List<Claim>
-                {
-                    new Claim(JwtRegisteredClaimNames.Sub, user.Id),
-                    new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName),
-                    new Claim(ClaimTypes.Name,user.Email),
-                    new Claim(System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString())
-                };
-            /*foreach (var userRole in userRoles)
-            {
-                authClaims.Add(new Claim(ClaimTypes.Role, userRole));
-            }*/
-            var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
-            var token = new JwtSecurityToken(
-                issuer: _configuration["JWT:ValidIssuer"],
-                audience: _configuration["JWT:ValidAudience"],
-                expires: DateTime.Now.AddHours(5),
-                signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
-                );
-            return  new JwtSecurityTokenHandler().WriteToken(token);
-        }
-        private ClaimsPrincipal GetPrincipalFromExpiredToken(string token)
-        {
-            var tokenvalidationparams = new TokenValidationParameters()
-            {
-                ValidateIssuer = true,
-                ValidateAudience = true,
-                ValidAudience = _configuration["JWT:ValidAudience"],
-                ValidIssuer = _configuration["JWT:ValidIssuer"],
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]))
-            };
-            var tokenHandler = new JwtSecurityTokenHandler();
-            SecurityToken securityToken;
-            var principal = tokenHandler.ValidateToken(token, tokenvalidationparams, out securityToken);
-            var jwtSecurityToken = securityToken as JwtSecurityToken;
-            if (jwtSecurityToken == null || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
-                throw new SecurityTokenException("Invalid token");
-            return principal;
-        }
-
-        private string GenerateToken(IEnumerable<Claim> claims)
-        {
-            var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
-            var token = new JwtSecurityToken(
-                issuer: _configuration["JWT:ValidIssuer"],
-                audience: _configuration["JWT:ValidAudience"],
-                expires: DateTime.Now.AddHours(5),
-               // claims = claims,
-                signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
-                );
-            return new JwtSecurityTokenHandler().WriteToken(token); 
-        }
-
-        [HttpPost]
-        [Route("refresh")]
-        public IActionResult Refresh(string token)
-        {
-            var principal = GetPrincipalFromExpiredToken(token);
-            var username = principal.Identity.Name;
-            var newJwtToken = GenerateToken(principal.Claims);
-            var newRefreshToken = GenerateRefreshToken();
-            return new ObjectResult(new
-            {
-                token = newJwtToken,
-                refreshToken = newRefreshToken
-            });
-        }
-
-
-      
         [HttpPost]
         [Route("Login")]
         public async Task<IActionResult> Login([FromBody] Candidat model)
@@ -189,31 +133,119 @@ namespace ApplicationTEST.Controllers
                         status = "500"
                     });
                 }
+                var userRoles = await userManager.GetRolesAsync(user);
                 var authClaims = new List<Claim>
                 {
-                    new Claim(JwtRegisteredClaimNames.Sub, user.Id),
-                    new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName),
                     new Claim(ClaimTypes.Name,user.Email),
                     new Claim(System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString())
                 };
-                /*foreach (var userRole in userRoles)
+
+                foreach (var userRole in userRoles)
                 {
                     authClaims.Add(new Claim(ClaimTypes.Role, userRole));
-                }*/
+                }
                 var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
+                var email = "";
                 var token = new JwtSecurityToken(
                     issuer: _configuration["JWT:ValidIssuer"],
                     audience: _configuration["JWT:ValidAudience"],
                     expires: DateTime.Now.AddHours(5),
+                    //   claims = authClaims,
                     signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
                     );
                 return Ok(new
                 {
                     token = new JwtSecurityTokenHandler().WriteToken(token),
-                    expires = DateTime.Now.AddHours(5),
-                    refreshToken = GenerateRefreshToken(),
                     user = user
-                }) ;
+                });
+            }
+            else
+            {
+                return Unauthorized();
+            }
+        }
+        [HttpPost]
+        [Route("Inscription/ConfimMail")]
+        public async Task<IActionResult> ConfirmInscription([FromBody] Candidat candidat)
+        {
+            var user = await userManager.FindByNameAsync(candidat.UserName);
+            Console.Write(user.Email);
+            if (user != null)
+            {
+                if (user.EmailConfirmed == true)
+                {
+                    return StatusCode(StatusCodes.Status500InternalServerError, new Response { message = "Email dejà confirmé  !", status = "401" });
+                }
+                var result = await userManager.ConfirmEmailAsync(user, candidat.nom);
+                if (result.Succeeded)
+                {
+                    return Ok(new
+                    {
+                        reponse = "email a été confirmé avec succès ! "
+                    });
+                }
+                else
+                {
+                    return StatusCode(StatusCodes.Status500InternalServerError, new Response { message = "Email not confirmed !", status = "500" });
+                }   
+            }
+            return StatusCode(StatusCodes.Status404NotFound, new Response { message = "User Not found !" });
+        }
+
+        [HttpPost]
+        [Route("RegisterRH")]
+        public async Task<IActionResult> RegisterRH([FromBody] Responsable_RH model)
+        {
+            var userExist = await userManagerRH.FindByEmailAsync(model.Email);
+            var userbyusername = await userManagerRH.FindByNameAsync(model.UserName);
+            Console.Write("VARIABLE A AFFFICHER !!!!!!!");
+            Responsable_RH responsable_RH = new Responsable_RH
+            {
+                Email = model.Email,
+                SecurityStamp = Guid.NewGuid().ToString(),
+                UserName = model.UserName,
+                mdp = model.mdp,
+            };
+            var result = await userManagerRH.CreateAsync(responsable_RH, model.mdp);
+            if (!result.Succeeded)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new Response { message = "Error has been occured !", status = "Error 500 !!" });
+            }
+            return Ok(new Response { message = "User succefully added !", status = "success 200 " });
+        }
+
+        [HttpPost]
+        [Route("LoginRH")]
+        public async Task<IActionResult> LoginRH([FromBody] Responsable_RH model)
+        {
+            var userRH = await userManagerRH.FindByEmailAsync(model.Email);
+            if (userRH != null && await userManagerRH.CheckPasswordAsync(userRH, model.mdp))
+            {
+                var userRoles = await userManagerRH.GetRolesAsync(userRH);
+                var authClaims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.Name,userRH.Email),
+                    new Claim(System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString())
+                };
+
+                foreach (var userRole in userRoles)
+                {
+                    authClaims.Add(new Claim(ClaimTypes.Role, userRole));
+                }
+                var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
+                var email = "";
+                var token = new JwtSecurityToken(
+                    issuer: _configuration["JWT:ValidIssuer"],
+                    audience: _configuration["JWT:ValidAudience"],
+                    expires: DateTime.Now.AddHours(5),
+                    //   claims = authClaims,
+                    signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
+                    );
+                return Ok(new
+                {
+                    token = new JwtSecurityTokenHandler().WriteToken(token),
+                    userRH = userRH
+                });
             }
             else
             {
@@ -221,33 +253,24 @@ namespace ApplicationTEST.Controllers
             }
         }
 
-        public string GenerateRefreshToken()
-        {
-            var randomNumber = new byte[32];
-            using (var rng = RandomNumberGenerator.Create())
-            {
-                rng.GetBytes(randomNumber);
-                return Convert.ToBase64String(randomNumber);
-            }
-        }
-
+      
 
         [HttpPost]
-        [Route("Inscription/ConfimMail")]
-        public async Task<IActionResult> ConfirmInscription ([FromBody] Candidat candidat)
+        [Route("UpdateRH")]
+        public async Task<IActionResult> UpdateRH([FromBody] Responsable_RH model)
         {
-            var user = await userManager.FindByIdAsync(candidat.UserName);
-          //  Console.Write(user.Email);
-            if (user != null)
+            Responsable_RH responsable_RH = (Responsable_RH) await userManagerRH.FindByEmailAsync(model.Email);
+            responsable_RH.mdp = model.mdp;
+            responsable_RH.code = model.code;
+            var token = await userManagerRH.GeneratePasswordResetTokenAsync(responsable_RH);
+            await userManagerRH.ResetPasswordAsync(responsable_RH, token, model.mdp);
+            var result = await userManagerRH.UpdateAsync(responsable_RH);
+
+            if (!result.Succeeded)
             {
-                user.EmailConfirmed= true;
-                await _context.SaveChangesAsync();
-                return Ok(new
-                {
-                    reponse = "email a été confirmé "
-                });
+                return StatusCode(StatusCodes.Status500InternalServerError, new Response { message = "Error has been occured !", status = "Error 500 !!" });
             }
-            return StatusCode(StatusCodes.Status404NotFound, new Response { message = "Error has been occured !" });
+            return Ok(new Response { message = "User succefully added !", status = "success 200 " });
         }
 
         //reset password user
@@ -255,44 +278,41 @@ namespace ApplicationTEST.Controllers
         [Route("ResetPassword")]
         public async Task<IActionResult> checkEmailCandidat([FromBody] Response res)
         {
-            try
+            var email = res.extrafield;
+            Console.WriteLine("this a message from reset password : " + email);
+            var candidat = await userManager.FindByEmailAsync(email);
+            if (candidat != null)
             {
-                var email = res.extrafield;
-                Candidat candidat = await userManager.FindByEmailAsync(email);
-                if(candidat != null)
+                var token = await userManager.GeneratePasswordResetTokenAsync(candidat);
+                token = HttpUtility.UrlEncode(token);
+                Console.WriteLine("this a message from reset password : " + token);
+                var message = new MimeMessage();
+                message.From.Add(new MailboxAddress("area-e-hire  ", "areaehirer.recrutement@gmail.com"));
+                message.To.Add(new MailboxAddress("", email));
+                message.Subject = " Rénitialiser votre mot de passe ";
+                var chaine = " Bonjour " + candidat.nom.ToUpper() + " " + candidat.prenom +
+                    "! \n \n Pour changer votre mot de passe, veuillez cliquer sur le lien ci-dessous : \n http://localhost:3000/change-password?user_id="
+                      + candidat.Email + "&token=" + token + "\n Ce lien expirera au bout d'une heure ! \n \n Merci pour votre confiance,\n L'équipe Area E-Hire";
+                message.Body = new TextPart("plain")
                 {
-                    var token = await userManager.GeneratePasswordResetTokenAsync(candidat);
-                    token = HttpUtility.UrlEncode(token);
-                    var message = new MimeMessage();
-                    message.From.Add(new MailboxAddress("area-e-hire  ", "areaehirer.recrutement@gmail.com"));
-                    message.To.Add(new MailboxAddress("", email));
-                    message.Subject = " Changer votre mot de passe ";
-                    var chaine = " Bonjour " + candidat.nom.ToUpper() + " " + candidat.prenom +
-                        "! \n \n Pour changer votre mot de passe, veuillez utiliser le lien ci-dessous : \n http://localhost:3000/change-password?user_id="
-                          + candidat.Email+"&token="+token+ "\n Ce lien expirera dans une heure ! \n \n Merci pour votre confiance,\n L'équipe Area E-Hire";
-                    message.Body = new TextPart("plain")
-                    {
-                        Text = chaine.ToString()
-                    };
-                    using (var client = new SmtpClient())
-                    {
-                        client.Connect("smtp.gmail.com", 587, false);
-                        client.Authenticate("areaehirer.recrutement@gmail.com", "areaehire123");
-                        client.Send(message);
-                        client.Disconnect(true);
-                    }
-                    return Ok(new Response { message = "email succefully sent for recover !", status = "success 200 " });
-                }
-                else
+                    Text = chaine.ToString()
+                };
+                using (var client = new SmtpClient())
                 {
-                    return NotFound();
+                    client.Connect("smtp.gmail.com", 587, false);
+                    client.Authenticate("areaehirer.recrutement@gmail.com", "areaehire123");
+                    client.Send(message);
+                    client.Disconnect(true);
                 }
+                return Ok(new Response { message = "email succefully sent for recover !", status = "success 200 " });
             }
-            catch
+            else
             {
-                return BadRequest();
+                return NotFound();
             }
         }
+
+
 
         //change password 
         [HttpPost]
@@ -335,5 +355,5 @@ namespace ApplicationTEST.Controllers
 
     }
 
-   
+
 }

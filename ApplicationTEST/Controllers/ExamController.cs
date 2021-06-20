@@ -48,10 +48,12 @@ namespace ApplicationTEST.Controllers
                         List<Note_Question> randomArray = new List<Note_Question>();
                         List<int> indexarray = new List<int>();
                         Console.WriteLine("Length notequestion ;" + exam.notes_questions.Count);
+                        int randomIndex;
                         while (exam.nbr_questions > indexarray.Count)
                         {
+                            randomIndex = 0;
                             Random random = new Random();
-                            var randomIndex = random.Next(0, exam.notes_questions.Count);
+                            randomIndex = random.Next(0, exam.notes_questions.Count);
                             Console.WriteLine("randomIndex" + randomIndex);
                             if (indexarray.Contains(randomIndex))
                             {

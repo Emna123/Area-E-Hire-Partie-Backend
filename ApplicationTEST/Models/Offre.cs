@@ -39,7 +39,7 @@ namespace ApplicationTEST.Models
         public virtual ICollection<Langue> Langue { get; set; }
         public virtual ICollection<Diplome> Diplome { get; set; }
         public virtual ICollection<Questionnaire> Questionnaire { get; set; }
-        public virtual Examen  Examen { get; set; }
+        public virtual Examen Examen { get; set; }
 
        
     }

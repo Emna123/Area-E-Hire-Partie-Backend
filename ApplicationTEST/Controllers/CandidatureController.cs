@@ -25,7 +25,13 @@ namespace ApplicationTEST.Controllers
             _context = context;
             this.userManager = userManager;
         }
-
+        [HttpGet]
+        [Route("getAllCandidatures")]
+        public async Task<ActionResult<IEnumerable<Candidature>>> GetOffres()
+        {
+            return await _context.Candidatures.ToListAsync();
+     
+        }
         [HttpPost]
         [Route("AddCandidature/{id}/{idoffre}")]
         public async Task<IActionResult> AddCandidature(string id,int idoffre, [FromBody] Candidature candidature)
@@ -88,10 +94,24 @@ namespace ApplicationTEST.Controllers
 
         [HttpPost]
         [Route("SendAccept/{id}/{type}/{metier}")]
-        public async Task<ActionResult<IEnumerable<Candidature>>> SendAccept(long id,string type,string metier)
+        public async Task<ActionResult<IEnumerable<Candidature>>> SendAccept(int id,string type,string metier)
         {
+
+
+
+         
+
+
+
             var candidature = await _context.Candidature.FindAsync(id);
-            candidature.etat = "en traitement";
+
+            var result_Examen = new Result_Examen();
+
+              result_Examen.date_expiration = DateTime.Now.AddDays(2);
+                result_Examen.candidat = candidature.candidat;
+               result_Examen.examen = candidature.offre.Examen;
+                _context.Add(result_Examen);
+                candidature.etat = "présélectionné";
 
             _context.Entry(candidature).State = EntityState.Modified;
 
@@ -102,7 +122,7 @@ namespace ApplicationTEST.Controllers
             message.To.Add(new MailboxAddress("", candidature.email));
             if (type == "Emploi") { 
             message.Subject = "Nouvelle candidature pour l'emploi : " +metier;
-            message.Body = new TextPart(MimeKit.Text.TextFormat.Html) { Text = string.Format("<br/><br/><img src='{0}' style='height: 100px;width: 150px;margin-left: 200px;'/><hr style='color:#9B59B6;width: 500px;margin-left: 200px;'><br/>", "https://i.ibb.co/YfJg21W/i1.png") + string.Format("<p style='margin-left: 200px;font-size: 15px;color:black'>Bonjour,<br/>{0}</p>", "<p style='margin-left: 200px;color:black;width:550px'>Suite à votre postulation dans le site Area E-Hire sur l'offre " + "d'emploi"+" "+ metier+ ". Nous invite de passer un examen d'évolution en ligne Soyez prêt, nous vous informerons des détails plus tard !<p style='color:#110240;margin-left: 200px;'>Merci pour votre confiance,<br/>L' équipe Area E-Hire</p></p>") };
+            message.Body = new TextPart(MimeKit.Text.TextFormat.Html) { Text = string.Format("<br/><br/><img src='{0}' style='height: 100px;width: 150px;margin-left: 200px;'/><hr style='color:#9B59B6;width: 500px;margin-left: 200px;'><br/>", "https://i.ibb.co/YfJg21W/i1.png") + string.Format("<p style='margin-left: 200px;font-size: 15px;color:black'>Bonjour,<br/>{0}</p>", "<p style='margin-left: 200px;color:black;width:550px'>Suite à votre postulation dans le site Area E-Hire sur l'offre " + "d'emploi"+" "+ metier+ ". Nous invite de passer un examen d'évolution en ligne.Lien... !<p style='color:#110240;margin-left: 200px;'>Merci pour votre confiance,<br/>L' équipe Area E-Hire</p></p>") };
             }
             else
             {
@@ -114,8 +134,8 @@ namespace ApplicationTEST.Controllers
                        "<p style='margin-left: 200px;color:black;width:550px'>" +
                        "Suite à votre postulation dans le site Area E-Hire sur l'offre "
                     + "de stage" + " " + metier + "." +
-                    " Nous invite de passer un examen d'évolution en ligne Soyez prêt, " +
-                    "nous vous informerons des détails plus tard !" +
+                    " Nous invite de passer un examen d'évolution en ligne. " +
+                    "Lien de l'Examen:" +
                     "<p style='color:#110240;margin-left: 200px;'>Merci pour votre confiance,<br/>" +
                     "L' équipe Area E-Hire</p></p>") };
             }
@@ -135,10 +155,10 @@ namespace ApplicationTEST.Controllers
         }
         [HttpPost]
         [Route("SendRefuse/{id}/{type}/{metier}")]
-        public async Task<ActionResult<IEnumerable<Candidature>>> SendRefuse(long id, string type, string metier)
+        public async Task<ActionResult<IEnumerable<Candidature>>> SendRefuse(int id, string type, string metier)
         {
             var candidature = await _context.Candidature.FindAsync(id);
-            candidature.etat = "réfuser";
+            candidature.etat = "rejeté";
 
             _context.Entry(candidature).State = EntityState.Modified;
 

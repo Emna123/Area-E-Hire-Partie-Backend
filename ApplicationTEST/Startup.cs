@@ -1,18 +1,19 @@
+using ApplicationTEST.Models;
+using EmailService;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.EntityFrameworkCore;
-using ApplicationTEST.Models;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
 using Microsoft.Extensions.FileProviders;
-using System.IO;
-using EmailService;
+using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using System;
+using System.IO;
+using System.Text;
 
 namespace ApplicationTEST
 {
@@ -29,35 +30,47 @@ namespace ApplicationTEST
         public void ConfigureServices(IServiceCollection services)
         {
             //services.AddDbContext<TodoContext>(opt =>opt.UseInMemoryDatabase("maa"));
-            services.AddControllersWithViews()
-                  .AddNewtonsoftJson(options =>
-                 
-                   options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
-            );
             var emailConfig = Configuration
            .GetSection("EmailConfiguration")
             .Get<EmailConfiguration>();
             services.AddSingleton(emailConfig);
             services.AddScoped<IEmailSender, EmailSender>();
             //For entity framework
-            services.AddDbContext<TodoContext>(opt => opt.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"))
-            );
-            //.UseLazyLoadingProxies()
-            //For Identity
-            services.AddIdentity<Candidat, IdentityRole>()
+          
+            services.AddDbContext<TodoContext>(opt => opt.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
+
+               services.AddIdentity<User,IdentityRole>()
+                   .AddDefaultTokenProviders()
+                 //  .AddClaimsPrincipalFactory<UserClaimsPrincipalFactory<Candidat, IdentityRole>>()
+                   //.AddDefaultUI()
+                   .AddRoles<IdentityRole>()
+                   .AddEntityFrameworkStores<TodoContext>();
+
+          /*  services.AddIdentity<Candidat, IdentityRole>()
+              .AddRoles<IdentityRole>()
+              // .AddClaimsPrincipalFactory<UserClaimsPrincipalFactory<Responsable_RH, IdentityRole>>()
+              .AddEntityFrameworkStores<TodoContext>()
+                              //  .AddDefaultUI()
+                              .AddDefaultTokenProviders();
+
+
+            services.AddIdentityCore<Responsable_RH>()
+                //  .AddRoles<Resp>()
+                // .AddClaimsPrincipalFactory<UserClaimsPrincipalFactory<Responsable_RH, IdentityRole>>()
                 .AddEntityFrameworkStores<TodoContext>()
-                .AddDefaultTokenProviders();
+                .AddDefaultTokenProviders();*/
 
-           var tokenvalidationparams = new TokenValidationParameters()
+                //  .AddDefaultUI()
+                // .AddTokenProvider<DataProtectorTokenProvider<Responsable_RH>>(TokenOptions.DefaultProvider);
+
+            services.Configure<DataProtectionTokenProviderOptions>(opt =>
             {
-                ValidateIssuer = true,
-                ValidateAudience = true,
-                ValidAudience = Configuration["JWT:ValidAudience"],
-                ValidIssuer = Configuration["JWT:ValidIssuer"],
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JWT:Secret"]))
+                opt.Name = "Default";
+                opt.TokenLifespan = TimeSpan.FromHours(1);
+            });
 
+           
 
-            };
             //Adding authentication
             services.AddAuthentication(options =>
             {
@@ -70,24 +83,31 @@ namespace ApplicationTEST
             {
                 options.SaveToken = true;
                 options.RequireHttpsMetadata = false;
-                // options.SaveToken = true;
-                options.TokenValidationParameters = tokenvalidationparams;
+                options.SaveToken = true;
+                options.TokenValidationParameters = new TokenValidationParameters()
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidAudience = Configuration["JWT:ValidAudience"],
+                    ValidIssuer = Configuration["JWT:ValidIssuer"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JWT:Secret"]))
+
+
+                };
             });
-            services.AddSingleton(tokenvalidationparams);
-        services.AddCors();
-          
+
+            services.AddCors();
+
             services.AddControllers()
             .AddNewtonsoftJson(options =>
             options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
-         );
-            services.Configure<DataProtectionTokenProviderOptions>(opt =>
-            opt.TokenLifespan = TimeSpan.FromHours(1));
+);
 
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -96,14 +116,14 @@ namespace ApplicationTEST
             {
                 FileProvider = new PhysicalFileProvider(Path.Combine(env.ContentRootPath, "wwwroot/uploads")),
                 RequestPath = "/Files",
-            }) ;
 
+            });
             app.UseStaticFiles(new StaticFileOptions
             {
                 FileProvider = new PhysicalFileProvider(Path.Combine(env.ContentRootPath, "wwwroot/images")),
                 RequestPath = "/Photos",
-            });
 
+            });
             /*var tokenValidationParameters = new TokenValidationParameters
             {
                 ValidateIssuerSigningKey = true,
@@ -125,7 +145,6 @@ namespace ApplicationTEST
                 .AllowAnyHeader()
                 .SetIsOriginAllowed(origin => true) // allow any origin
                 .AllowCredentials());
-
             app.UseAuthentication();
             app.UseAuthorization();
 

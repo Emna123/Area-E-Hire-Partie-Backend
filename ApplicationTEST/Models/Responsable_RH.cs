@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Identity;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -7,19 +8,10 @@ using System.Threading.Tasks;
 
 namespace ApplicationTEST.Models
 {
-    public class Responsable_RH
+    public class Responsable_RH : User
     {
-       
-
-        [Key]
-        public int id_resp { get; set; }
-        [Column(TypeName = "varchar")]
-        [MaxLength(100)]
-        public String e_mail { get; set; }
-        [Column(TypeName = "varchar")]
-        [MaxLength(100)]
+        public string key { get; set; }
         public String mdp { get; set; }
-        [Column]
-         public int code { get; set; }
+        public int code { get; set; }
     }
 }
