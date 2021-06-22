@@ -21,9 +21,9 @@ namespace ApplicationTEST.Controllers
     public class CandidatsController : ControllerBase
     {
         private readonly TodoContext _context;
-        private readonly UserManager<Candidat> userManager;
+        private readonly UserManager<User> userManager;
 
-        public CandidatsController(UserManager<Candidat> userManager, TodoContext context)
+        public CandidatsController(UserManager<User> userManager, TodoContext context)
         {
             _context = context;
             this.userManager = userManager;
@@ -55,7 +55,7 @@ namespace ApplicationTEST.Controllers
         public async Task<IActionResult> PutCandidat(string id, Candidat candidat)
         {
 
-            var user = await userManager.FindByIdAsync(id);
+            Candidat user = (Candidat) await userManager.FindByIdAsync(id);
             if (user != null)
             {
                 user.nom = candidat.nom;

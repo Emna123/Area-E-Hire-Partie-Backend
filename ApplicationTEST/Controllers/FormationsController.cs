@@ -17,10 +17,10 @@ namespace ApplicationTEST.Controllers
     public class FormationsController : Controller
     {
         private readonly TodoContext _context;
-        private readonly UserManager<Candidat> userManager;
+        private readonly UserManager<User> userManager;
 
 
-        public FormationsController(TodoContext context, UserManager<Candidat> userManager)
+        public FormationsController(TodoContext context, UserManager<User> userManager)
         {
             this.userManager = userManager;
             _context = context;
@@ -30,7 +30,7 @@ namespace ApplicationTEST.Controllers
         [Route("getAllFormations/{id}")]
         public async Task<IActionResult> GetFormations(string id)
         {
-            var user = await userManager.FindByIdAsync(id);
+            Candidat user = (Candidat) await userManager.FindByIdAsync(id);
             if (user != null)
             {
                 var formations = user.Formation;
@@ -46,7 +46,7 @@ namespace ApplicationTEST.Controllers
         [Route("AddFormation/{id}")]
         public async Task<IActionResult> AddFormation(string id, [FromBody] Formation formation)
         {
-            var user = await userManager.FindByIdAsync(id);
+            Candidat user = (Candidat)await userManager.FindByIdAsync(id);
             if (user != null)
             {
                 formation.candidat = user;

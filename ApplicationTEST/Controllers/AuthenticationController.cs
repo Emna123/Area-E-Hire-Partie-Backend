@@ -43,7 +43,6 @@ namespace ApplicationTEST.Controllers
             this.userManagerRH = userManagerRH;
             this.roleManager = roleManager;
             _context = context;
-
             _configuration = configuration;
         }
         /* public Sendmail()
@@ -149,8 +148,8 @@ namespace ApplicationTEST.Controllers
                 var token = new JwtSecurityToken(
                     issuer: _configuration["JWT:ValidIssuer"],
                     audience: _configuration["JWT:ValidAudience"],
-                    expires: DateTime.Now.AddHours(5),
-                    //   claims = authClaims,
+                    expires: DateTime.Now.AddMinutes(5),
+                    claims : authClaims,
                     signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
                     );
                 return Ok(new
@@ -159,6 +158,7 @@ namespace ApplicationTEST.Controllers
                     user = user
                 });
             }
+
             else
             {
                 return Unauthorized();
@@ -280,7 +280,7 @@ namespace ApplicationTEST.Controllers
         {
             var email = res.extrafield;
             Console.WriteLine("this a message from reset password : " + email);
-            var candidat = await userManager.FindByEmailAsync(email);
+            Candidat candidat = (Candidat) await userManager.FindByEmailAsync(email);
             if (candidat != null)
             {
                 var token = await userManager.GeneratePasswordResetTokenAsync(candidat);

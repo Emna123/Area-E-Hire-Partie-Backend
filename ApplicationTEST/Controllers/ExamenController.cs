@@ -17,7 +17,7 @@ namespace ApplicationTEST.Controllers
     public class ExamenController : ControllerBase
     {
         private readonly TodoContext _context;
-        private readonly UserManager<Candidat> userManager;
+        private readonly UserManager<User> userManager;
 
         public ExamenController(TodoContext context)
         {

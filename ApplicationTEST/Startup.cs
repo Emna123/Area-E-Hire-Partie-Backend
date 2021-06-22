@@ -69,7 +69,16 @@ namespace ApplicationTEST
                 opt.TokenLifespan = TimeSpan.FromHours(1);
             });
 
-           
+            services.ConfigureApplicationCookie(options =>
+            {
+                // Cookie settings
+                options.Cookie.HttpOnly = true;
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
+                options.LoginPath = "/Identity/Account/Login";
+                options.AccessDeniedPath = "/Identity/Account/AccessDenied";
+                options.SlidingExpiration = true;
+            });
+
 
             //Adding authentication
             services.AddAuthentication(options =>
