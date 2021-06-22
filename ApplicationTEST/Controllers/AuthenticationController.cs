@@ -27,18 +27,20 @@ namespace ApplicationTEST.Controllers
     [ApiController]
     public class AuthenticationController : ControllerBase
     {
-        private readonly UserManager<Candidat> userManager;
-        private readonly UserManager<Responsable_RH> userManagerRH;
+        private readonly UserManager<User> userManager;
+        private readonly UserManager<User> userManagerRH;
 
         private readonly RoleManager<IdentityRole> roleManager;
         private readonly IConfiguration _configuration;
         private readonly TodoContext _context;
 
 
-        public AuthenticationController(UserManager<Candidat> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration, TodoContext context, UserManager<Responsable_RH> userManagerRH)
+        public AuthenticationController(UserManager<User> userManager,
+            RoleManager<IdentityRole> roleManager, 
+            IConfiguration configuration, TodoContext context, UserManager<User> userManagerRH)
         {
-            this.userManagerRH = userManagerRH;
             this.userManager = userManager;
+            this.userManagerRH = userManagerRH;
             this.roleManager = roleManager;
             _context = context;
 
@@ -49,6 +51,7 @@ namespace ApplicationTEST.Controllers
 
 
          }*/
+//
         [HttpPost]
         [Route("Register")]
         public async Task<IActionResult> Register([FromBody] Candidat model)
@@ -81,15 +84,30 @@ namespace ApplicationTEST.Controllers
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, new Response { message = "Error has been occured !", status = "Error 500 !!" });
             }
+            bool x = await roleManager.RoleExistsAsync("User");
+            x = await roleManager.RoleExistsAsync("User");
+            if (!x)
+            {
+                var role = new IdentityRole();
+                role.Name = "User";
+                await roleManager.CreateAsync(role);
+            }
+
+            var result1 = await userManager.AddToRoleAsync(candidat, "User");
+
             var message = new MimeMessage();
+            var token = await userManager.GenerateEmailConfirmationTokenAsync(candidat);
+            token = HttpUtility.UrlEncode(token);
             message.From.Add(new MailboxAddress("area-e-hire  ", "areaehirer.recrutement@gmail.com"));
             message.To.Add(new MailboxAddress("", model.Email));
             message.Subject = "Confirmation Compte Area E-Hire";
-            var chaine = "Bonjour " + model.nom.ToUpper() + " " + model.prenom + "! \n Veuillez Confirmer votre compte en cliquant sur ce lien \n http://localhost:3000/Inscription/Confirmation-compte?id=" + model.UserName + "";
+            var chaine = "Bonjour " + model.nom.ToUpper() + " " + model.prenom +
+                "! \n Veuillez Confirmer votre compte en cliquant sur ce lien \n " +
+                "http://localhost:3000/Inscription/Confirmation-compte?id=" + model.UserName +
+                "&token="+token;
             message.Body = new TextPart("plain")
             {
                 Text = chaine.ToString()
-
             };
             using (var client = new SmtpClient())
             {
@@ -132,7 +150,7 @@ namespace ApplicationTEST.Controllers
                     issuer: _configuration["JWT:ValidIssuer"],
                     audience: _configuration["JWT:ValidAudience"],
                     expires: DateTime.Now.AddHours(5),
-                    //   claims = authClaims,
+                    claims: authClaims,
                     signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
                     );
                 return Ok(new
@@ -154,15 +172,26 @@ namespace ApplicationTEST.Controllers
             Console.Write(user.Email);
             if (user != null)
             {
-                user.EmailConfirmed = true;
-                await _context.SaveChangesAsync();
-                return Ok(new
+                if (user.EmailConfirmed == true)
                 {
-                    reponse = "email a été confirmé "
-                });
+                    return StatusCode(StatusCodes.Status500InternalServerError, new Response { message = "Email dejà confirmé  !", status = "401" });
+                }
+                var result = await userManager.ConfirmEmailAsync(user, candidat.nom);
+                if (result.Succeeded)
+                {
+                    return Ok(new
+                    {
+                        reponse = "email a été confirmé avec succès ! "
+                    });
+                }
+                else
+                {
+                    return StatusCode(StatusCodes.Status500InternalServerError, new Response { message = "Email not confirmed !", status = "500" });
+                }   
             }
-            return StatusCode(StatusCodes.Status404NotFound, new Response { message = "Error has been occured !" });
+            return StatusCode(StatusCodes.Status404NotFound, new Response { message = "User Not found !" });
         }
+
         [HttpPost]
         [Route("RegisterRH")]
         public async Task<IActionResult> RegisterRH([FromBody] Responsable_RH model)
@@ -170,9 +199,6 @@ namespace ApplicationTEST.Controllers
             var userExist = await userManagerRH.FindByEmailAsync(model.Email);
             var userbyusername = await userManagerRH.FindByNameAsync(model.UserName);
             Console.Write("VARIABLE A AFFFICHER !!!!!!!");
-
-
-
             Responsable_RH responsable_RH = new Responsable_RH
             {
                 Email = model.Email,
@@ -180,13 +206,22 @@ namespace ApplicationTEST.Controllers
                 UserName = model.UserName,
                 mdp = model.mdp,
             };
+
             var result = await userManagerRH.CreateAsync(responsable_RH, model.mdp);
+            bool x = await roleManager.RoleExistsAsync("Admin");
+
+            if (!x)
+            {
+                var role = new IdentityRole();
+                role.Name = "Admin";
+                await roleManager.CreateAsync(role);
+            }
+            var result1 = await userManager.AddToRoleAsync(responsable_RH, "Admin");
+
             if (!result.Succeeded)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, new Response { message = "Error has been occured !", status = "Error 500 !!" });
             }
-
-
             return Ok(new Response { message = "User succefully added !", status = "success 200 " });
         }
 
@@ -215,7 +250,7 @@ namespace ApplicationTEST.Controllers
                     issuer: _configuration["JWT:ValidIssuer"],
                     audience: _configuration["JWT:ValidAudience"],
                     expires: DateTime.Now.AddHours(10),
-                    //   claims = authClaims,
+                      claims : authClaims,
                     signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
                     );
                 return Ok(new
@@ -229,16 +264,18 @@ namespace ApplicationTEST.Controllers
                 return Unauthorized();
             }
         }
+
+
+
         [HttpPost]
         [Route("UpdateRH")]
         public async Task<IActionResult> UpdateRH([FromBody] Responsable_RH model)
         {
-            var responsable_RH = await userManagerRH.FindByEmailAsync(model.Email);
-            responsable_RH.mdp = model.mdp;
+            Responsable_RH responsable_RH = (Responsable_RH)await userManagerRH.FindByEmailAsync(model.Email);
+           responsable_RH.mdp = model.mdp;
             responsable_RH.code = model.code;
-            userManagerRH.RemovePasswordAsync(responsable_RH);
-
-            userManagerRH.AddPasswordAsync(responsable_RH, responsable_RH.mdp);
+            var token = await userManagerRH.GeneratePasswordResetTokenAsync(responsable_RH);
+            await userManagerRH.ResetPasswordAsync(responsable_RH, token, model.mdp);
             var result = await userManagerRH.UpdateAsync(responsable_RH);
 
             if (!result.Succeeded)
@@ -251,28 +288,24 @@ namespace ApplicationTEST.Controllers
         }
 
 
-        //reset password user
-       [ HttpPost]
+        [HttpPost]
         [Route("ResetPassword")]
         public async Task<IActionResult> checkEmailCandidat([FromBody] Response res)
         {
             var email = res.extrafield;
-
             Console.WriteLine("this a message from reset password : " + email);
-
-            Candidat candidat = await userManager.FindByEmailAsync(email);
+            Candidat candidat = (Candidat)await userManager.FindByEmailAsync(email);
             if (candidat != null)
             {
                 var token = await userManager.GeneratePasswordResetTokenAsync(candidat);
+                token = HttpUtility.UrlEncode(token);
                 Console.WriteLine("this a message from reset password : " + token);
-
-                //token = HttpUtility.UrlEncode(token);
                 var message = new MimeMessage();
                 message.From.Add(new MailboxAddress("area-e-hire  ", "areaehirer.recrutement@gmail.com"));
                 message.To.Add(new MailboxAddress("", email));
-                message.Subject = " Changer votre mot de passe ";
+                message.Subject = " Rénitialiser votre mot de passe ";
                 var chaine = " Bonjour " + candidat.nom.ToUpper() + " " + candidat.prenom +
-                    "! \n \n Pour changer votre mot de passe, veuillez utiliser le lien ci-dessous : \n http://localhost:3000/change-password?user_id="
+                    "! \n \n Pour changer votre mot de passe, veuillez cliquer sur le lien ci-dessous : \n http://localhost:3000/change-password?user_id="
                       + candidat.Email + "&token=" + token + "\n Ce lien expirera au bout d'une heure ! \n \n Merci pour votre confiance,\n L'équipe Area E-Hire";
                 message.Body = new TextPart("plain")
                 {
@@ -291,7 +324,6 @@ namespace ApplicationTEST.Controllers
             {
                 return NotFound();
             }
-
         }
 
         //change password 

@@ -1,17 +1,23 @@
+using ApplicationTEST.Models;
+using EmailService;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
-using Microsoft.EntityFrameworkCore;
-using ApplicationTEST.Models;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.Extensions.FileProviders;
 using System.IO;
 using EmailService;
+using System;
+using System.IO;
+using System.Text;
 
 namespace ApplicationTEST
 {
@@ -42,8 +48,43 @@ namespace ApplicationTEST
              services.AddIdentity<Responsable_RH, IdentityRole>()
              .AddEntityFrameworkStores<TodoContext>()
              .AddDefaultTokenProviders();*/
-            services.AddIdentityCore<Candidat>().AddRoles<IdentityRole>().AddEntityFrameworkStores<TodoContext>().AddDefaultTokenProviders();
+            services.AddIdentityCore<Candidat>().AddRoles<IdentityRole>().AddEntityFrameworkStores<TodoContext>();
             services.AddIdentityCore<Responsable_RH>().AddRoles<IdentityRole>().AddEntityFrameworkStores<TodoContext>();
+          
+            services.AddDbContext<TodoContext>(opt => opt.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
+
+               services.AddIdentity<User,IdentityRole>()
+                   .AddDefaultTokenProviders()
+                 //  .AddClaimsPrincipalFactory<UserClaimsPrincipalFactory<Candidat, IdentityRole>>()
+                   //.AddDefaultUI()
+                   .AddRoles<IdentityRole>()
+                   .AddEntityFrameworkStores<TodoContext>();
+
+          /*  services.AddIdentity<Candidat, IdentityRole>()
+              .AddRoles<IdentityRole>()
+              // .AddClaimsPrincipalFactory<UserClaimsPrincipalFactory<Responsable_RH, IdentityRole>>()
+              .AddEntityFrameworkStores<TodoContext>()
+                              //  .AddDefaultUI()
+                              .AddDefaultTokenProviders();
+
+
+            services.AddIdentityCore<Responsable_RH>()
+                //  .AddRoles<Resp>()
+                // .AddClaimsPrincipalFactory<UserClaimsPrincipalFactory<Responsable_RH, IdentityRole>>()
+                .AddEntityFrameworkStores<TodoContext>()
+                .AddDefaultTokenProviders();*/
+
+                //  .AddDefaultUI()
+                // .AddTokenProvider<DataProtectorTokenProvider<Responsable_RH>>(TokenOptions.DefaultProvider);
+
+            services.Configure<DataProtectionTokenProviderOptions>(opt =>
+            {
+                opt.Name = "Default";
+                opt.TokenLifespan = TimeSpan.FromHours(1);
+            });
+
+           
+
             //Adding authentication
             services.AddAuthentication(options =>
             {

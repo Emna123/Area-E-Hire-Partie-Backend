@@ -26,8 +26,8 @@ namespace ApplicationTEST.Controllers
         }
 
 
-   
-        [Authorize]
+
+        [Authorize(Roles = "Admin")]
         // POST api/<Note_QuestionController>
         [HttpPost]
         [Route("PostNote_Question/{idqs}/{idex}")]
@@ -49,6 +49,7 @@ namespace ApplicationTEST.Controllers
             }
             return NotFound();
         }
+        [Authorize(Roles = "Admin")]
         [HttpDelete]
         [Route("DeleteNote_Question/{id}")]
         public async Task<IActionResult> DeleteNote_Question(int id)

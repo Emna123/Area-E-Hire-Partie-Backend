@@ -8,11 +8,8 @@ using System.Threading.Tasks;
 
 namespace ApplicationTEST.Models
 {
-    public class Responsable_RH : IdentityUser
+    public class Responsable_RH : User
     {
-
-
-
         public string key { get; set; }
         public String mdp { get; set; }
         public int code { get; set; }

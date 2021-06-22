@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ApplicationTEST.Models
 {
-    public class TodoContext : IdentityDbContext<Candidat>
+    public class TodoContext : IdentityDbContext<User>
     {
         public TodoContext(DbContextOptions<TodoContext> options): base(options)
         {
@@ -143,8 +143,6 @@ namespace ApplicationTEST.Models
             //.OnDelete(DeleteBehavior.Cascade);
 
             // .OnDelete(DeleteBehavior.Restrict);
-
-
         }
 
         public DbSet<Candidat> Candidats { get; set; }
@@ -167,15 +165,9 @@ namespace ApplicationTEST.Models
         public DbSet<Diplome> Diplomes { get; set; }
         public DbSet<Offre> Offres { get; set; }
         public DbSet<Candidature> Candidatures { get; set; }
-
-
-
         public DbSet<Examen> Examens { get; set; }
         public DbSet<Result_Examen> Results_Examens { get; set; }
         public DbSet<Note_Question> Note_Questions { get; set; }
-
- 
         public DbSet<Reponse> Reponses { get; set; }
-
     }
 }

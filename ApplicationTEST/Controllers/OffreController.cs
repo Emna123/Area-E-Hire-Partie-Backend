@@ -23,23 +23,33 @@ namespace ApplicationTEST.Controllers
         {
             _context = context;
         }
+        [Authorize(Roles = "Admin,User")]
 
         //get all Offres
         [HttpGet]
         [Route("getAllOffres")]
         public async Task<ActionResult<IEnumerable<Offre>>> GetOffres()
         {
-            return await _context.Offres.ToListAsync();
-            /*.Include(x => x.diplomes).
-                                        Include(x => x.langues).
-                                        Include(x => x.competences).
-                                        Include(x => x.candidatures).
-                                        //   Where(x=> Convert.ToDateTime(x.date_expiration) > Convert.ToDateTime(DateTime.Now.ToString())).
-                                        ToListAsync();*/
+            try
+            {
+                return await _context.Offres.ToListAsync();
+                /*.Include(x => x.diplomes).
+                                            Include(x => x.langues).
+                                            Include(x => x.competences).
+                                            Include(x => x.candidatures).
+                                            //   Where(x=> Convert.ToDateTime(x.date_expiration) > Convert.ToDateTime(DateTime.Now.ToString())).
+                                            ToListAsync();*/
+            }
+            catch
+            {
+                return BadRequest();
+            }
+
+
         }
 
         // GET api/<OffreController>/5
-        [Authorize]
+        [Authorize(Roles = "Admin,User")]
         [HttpGet]
         [Route("getOffre/{id}")]
 
@@ -55,7 +65,24 @@ namespace ApplicationTEST.Controllers
             return offre;
           
         }
-        [Authorize]
+        [Authorize(Roles = "Admin,User")]
+        [HttpGet]
+        [Route("getOffreById/{id}")]
+
+        public async Task<ActionResult<Offre>> GetOffreById(int id)
+        {
+            var offre = await _context.Offre.FindAsync(id);
+
+            if (offre == null)
+            {
+                return null;
+            }
+
+            return offre;
+
+        }
+
+        [Authorize(Roles = "Admin")]
         // POST api/<OffreController>
         [HttpPost]
         [Route("PostOffre")]
@@ -74,7 +101,7 @@ namespace ApplicationTEST.Controllers
             }
             return NotFound();
         }
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         // PUT api/<OffreController>/5
         [HttpPut]
         [Route("PutOffre/{id}")]
@@ -105,33 +132,33 @@ namespace ApplicationTEST.Controllers
             return await _context.Offre.FindAsync(id);
         }
 
-       /* [HttpDelete]
-        [Route("DeleteExamenOffre/{id}")]
+        /* [HttpDelete]
+         [Route("DeleteExamenOffre/{id}")]
 
-        public async Task<ActionResult<Offre>> DeleteExamenOffre(int id)
-        {
-            var offre= await _context.Offre.FindAsync(id);
+         public async Task<ActionResult<Offre>> DeleteExamenOffre(int id)
+         {
+             var offre= await _context.Offre.FindAsync(id);
 
 
-            if (offre != null)
-            {
-                //offre.Examen= null;
-                _context.Remove(offre.Examen);
+             if (offre != null)
+             {
+                 //offre.Examen= null;
+                 _context.Remove(offre.Examen);
 
-                await _context.SaveChangesAsync();
+                 await _context.SaveChangesAsync();
 
-                return Ok(new
-                {
-                    msg = "Examen supprimée avec succée !"
-                });
-            }
-            return NotFound();
+                 return Ok(new
+                 {
+                     msg = "Examen supprimée avec succée !"
+                 });
+             }
+             return NotFound();
 
-            ;
-        }
-       */
+             ;
+         }
+        */
 
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         // DELETE api/<OffreController>/5
         [HttpDelete]
         [Route("DeleteOffre/{id}")]

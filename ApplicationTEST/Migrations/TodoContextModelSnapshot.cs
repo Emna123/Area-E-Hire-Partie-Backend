@@ -19,109 +19,6 @@ namespace ApplicationTEST.Migrations
                 .HasAnnotation("ProductVersion", "5.0.4")
                 .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-            modelBuilder.Entity("ApplicationTEST.Models.Candidat", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
-
-                    b.Property<int>("AccessFailedCount")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("CVname")
-                        .HasColumnType("text");
-
-                    b.Property<string>("CVoriginalfilename")
-                        .HasColumnType("text");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Email")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
-
-                    b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("LockoutEnabled")
-                        .HasColumnType("boolean");
-
-                    b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("NormalizedEmail")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
-
-                    b.Property<string>("NormalizedUserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
-
-                    b.Property<string>("PasswordHash")
-                        .HasColumnType("text");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("text");
-
-                    b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Photo")
-                        .HasColumnType("text");
-
-                    b.Property<string>("SecurityStamp")
-                        .HasColumnType("text");
-
-                    b.Property<bool>("TwoFactorEnabled")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("UserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
-
-                    b.Property<string>("adresse")
-                        .HasColumnType("text");
-
-                    b.Property<bool>("archiver")
-                        .HasColumnType("boolean");
-
-                    b.Property<DateTime>("date_naissance")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<string>("description")
-                        .HasColumnType("text");
-
-                    b.Property<string>("etat_matrimonial")
-                        .HasColumnType("text");
-
-                    b.Property<string>("genre")
-                        .HasColumnType("text");
-
-                    b.Property<string>("metier")
-                        .HasColumnType("text");
-
-                    b.Property<string>("nom")
-                        .HasColumnType("text");
-
-                    b.Property<string>("password")
-                        .HasColumnType("text");
-
-                    b.Property<string>("prenom")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("NormalizedEmail")
-                        .HasDatabaseName("EmailIndex");
-
-                    b.HasIndex("NormalizedUserName")
-                        .IsUnique()
-                        .HasDatabaseName("UserNameIndex");
-
-                    b.ToTable("AspNetUsers");
-                });
-
             modelBuilder.Entity("ApplicationTEST.Models.Candidature", b =>
                 {
                     b.Property<int>("id")
@@ -600,67 +497,6 @@ namespace ApplicationTEST.Migrations
                     b.ToTable("Reponses");
                 });
 
-            modelBuilder.Entity("ApplicationTEST.Models.Responsable_RH", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
-
-                    b.Property<int>("AccessFailedCount")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Email")
-                        .HasColumnType("text");
-
-                    b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("LockoutEnabled")
-                        .HasColumnType("boolean");
-
-                    b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("NormalizedEmail")
-                        .HasColumnType("text");
-
-                    b.Property<string>("NormalizedUserName")
-                        .HasColumnType("text");
-
-                    b.Property<string>("PasswordHash")
-                        .HasColumnType("text");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("text");
-
-                    b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("SecurityStamp")
-                        .HasColumnType("text");
-
-                    b.Property<bool>("TwoFactorEnabled")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("UserName")
-                        .HasColumnType("text");
-
-                    b.Property<int>("code")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("key")
-                        .HasColumnType("text");
-
-                    b.Property<string>("mdp")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Responsable_RH");
-                });
-
             modelBuilder.Entity("ApplicationTEST.Models.Result_Examen", b =>
                 {
                     b.Property<int>("id")
@@ -693,6 +529,76 @@ namespace ApplicationTEST.Migrations
                     b.HasIndex("examenid");
 
                     b.ToTable("Results_Examens");
+                });
+
+            modelBuilder.Entity("ApplicationTEST.Models.User", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("UserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedEmail")
+                        .HasDatabaseName("EmailIndex");
+
+                    b.HasIndex("NormalizedUserName")
+                        .IsUnique()
+                        .HasDatabaseName("UserNameIndex");
+
+                    b.ToTable("AspNetUsers");
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("User");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -823,6 +729,68 @@ namespace ApplicationTEST.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens");
+                });
+
+            modelBuilder.Entity("ApplicationTEST.Models.Candidat", b =>
+                {
+                    b.HasBaseType("ApplicationTEST.Models.User");
+
+                    b.Property<string>("CVname")
+                        .HasColumnType("text");
+
+                    b.Property<string>("CVoriginalfilename")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Photo")
+                        .HasColumnType("text");
+
+                    b.Property<string>("adresse")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("archiver")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime>("date_naissance")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("description")
+                        .HasColumnType("text");
+
+                    b.Property<string>("etat_matrimonial")
+                        .HasColumnType("text");
+
+                    b.Property<string>("genre")
+                        .HasColumnType("text");
+
+                    b.Property<string>("metier")
+                        .HasColumnType("text");
+
+                    b.Property<string>("nom")
+                        .HasColumnType("text");
+
+                    b.Property<string>("password")
+                        .HasColumnType("text");
+
+                    b.Property<string>("prenom")
+                        .HasColumnType("text");
+
+                    b.HasDiscriminator().HasValue("Candidat");
+                });
+
+            modelBuilder.Entity("ApplicationTEST.Models.Responsable_RH", b =>
+                {
+                    b.HasBaseType("ApplicationTEST.Models.User");
+
+                    b.Property<int>("code")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("key")
+                        .HasColumnType("text");
+
+                    b.Property<string>("mdp")
+                        .HasColumnType("text");
+
+                    b.HasDiscriminator().HasValue("Responsable_RH");
                 });
 
             modelBuilder.Entity("ApplicationTEST.Models.Candidature", b =>
@@ -1023,7 +991,7 @@ namespace ApplicationTEST.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("ApplicationTEST.Models.Candidat", null)
+                    b.HasOne("ApplicationTEST.Models.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1032,7 +1000,7 @@ namespace ApplicationTEST.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("ApplicationTEST.Models.Candidat", null)
+                    b.HasOne("ApplicationTEST.Models.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1047,7 +1015,7 @@ namespace ApplicationTEST.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ApplicationTEST.Models.Candidat", null)
+                    b.HasOne("ApplicationTEST.Models.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1056,34 +1024,11 @@ namespace ApplicationTEST.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("ApplicationTEST.Models.Candidat", null)
+                    b.HasOne("ApplicationTEST.Models.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("ApplicationTEST.Models.Candidat", b =>
-                {
-                    b.Navigation("candidatures");
-
-                    b.Navigation("Commentaire");
-
-                    b.Navigation("Competence");
-
-                    b.Navigation("examenresults");
-
-                    b.Navigation("Experience_prof");
-
-                    b.Navigation("Formation");
-
-                    b.Navigation("generer");
-
-                    b.Navigation("Hobby");
-
-                    b.Navigation("Langue");
-
-                    b.Navigation("linkedin");
                 });
 
             modelBuilder.Entity("ApplicationTEST.Models.Examen", b =>
@@ -1120,6 +1065,29 @@ namespace ApplicationTEST.Migrations
                     b.Navigation("notes_questions");
 
                     b.Navigation("reponses");
+                });
+
+            modelBuilder.Entity("ApplicationTEST.Models.Candidat", b =>
+                {
+                    b.Navigation("candidatures");
+
+                    b.Navigation("Commentaire");
+
+                    b.Navigation("Competence");
+
+                    b.Navigation("examenresults");
+
+                    b.Navigation("Experience_prof");
+
+                    b.Navigation("Formation");
+
+                    b.Navigation("generer");
+
+                    b.Navigation("Hobby");
+
+                    b.Navigation("Langue");
+
+                    b.Navigation("linkedin");
                 });
 #pragma warning restore 612, 618
         }
