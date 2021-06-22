@@ -12,7 +12,6 @@ using System.Threading.Tasks;
 
 namespace ApplicationTEST.Controllers
 {
-    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class CandidatureController : ControllerBase
@@ -25,6 +24,7 @@ namespace ApplicationTEST.Controllers
             _context = context;
             this.userManager = userManager;
         }
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         [Route("getAllCandidatures")]
         public async Task<ActionResult<IEnumerable<Candidature>>> GetOffres()
@@ -32,6 +32,7 @@ namespace ApplicationTEST.Controllers
             return await _context.Candidatures.ToListAsync();
      
         }
+        [Authorize(Roles = "User")]
         [HttpPost]
         [Route("AddCandidature/{id}/{idoffre}")]
         public async Task<IActionResult> AddCandidature(string id,int idoffre, [FromBody] Candidature candidature)
@@ -55,7 +56,7 @@ namespace ApplicationTEST.Controllers
             }
             return NotFound();
         }
-
+        [Authorize(Roles = "User")]
         [HttpGet]
         [Route("getAllCandidatures/{id}")]
         public async Task<ActionResult<IEnumerable<Candidature>>> getAllCandidatures(string id)
@@ -91,6 +92,7 @@ namespace ApplicationTEST.Controllers
                                                  Where(e => e.candidat == user);*/
 
         }
+        [Authorize(Roles = "Admin")]
 
         [HttpPost]
         [Route("SendAccept/{id}/{type}/{metier}")]
@@ -134,8 +136,8 @@ namespace ApplicationTEST.Controllers
                        "<p style='margin-left: 200px;color:black;width:550px'>" +
                        "Suite à votre postulation dans le site Area E-Hire sur l'offre "
                     + "de stage" + " " + metier + "." +
-                    " Nous invite de passer un examen d'évolution en ligne. " +
-                    "Lien de l'Examen:" +
+                    " Nous vous invitons à passer un examen d'évolution en ligne. " +
+                    "Merci de consulter la section Mes candidatures de l'application" +
                     "<p style='color:#110240;margin-left: 200px;'>Merci pour votre confiance,<br/>" +
                     "L' équipe Area E-Hire</p></p>") };
             }
@@ -153,6 +155,8 @@ namespace ApplicationTEST.Controllers
                 candidatures = candidature
             });
         }
+        [Authorize(Roles = "Admin")]
+
         [HttpPost]
         [Route("SendRefuse/{id}/{type}/{metier}")]
         public async Task<ActionResult<IEnumerable<Candidature>>> SendRefuse(int id, string type, string metier)
@@ -185,6 +189,8 @@ namespace ApplicationTEST.Controllers
                 candidatures = candidature
             });
         }
+        [Authorize(Roles = "Admin")]
+
         [HttpPost]
         [Route("SendEmail/{email}")]
         public async Task<ActionResult<IEnumerable<Candidature>>> SendEmail(string email , Mess ms)
@@ -212,12 +218,13 @@ namespace ApplicationTEST.Controllers
                 res = "message envoyé"
             });
         }
-       /* [HttpDelete]
-        [Route("DeleteCandidature/{id}")]
-        public async Task<IActionResult> DelCompetence(long id)
-        {
-            var candidature = await _context.Candidature.FindAsync(id);
-        }*/
+        /* [HttpDelete]
+         [Route("DeleteCandidature/{id}")]
+         public async Task<IActionResult> DelCompetence(long id)
+         {
+             var candidature = await _context.Candidature.FindAsync(id);
+         }*/
+        [Authorize(Roles = "Admin,User")]
         [HttpDelete]
         [Route("deleteCandidature/{id}")]
         public async Task<ActionResult<IEnumerable<Candidature>>> deleteCandidature(int id)
@@ -225,7 +232,8 @@ namespace ApplicationTEST.Controllers
             // var user = await userManager.FindByIdAsync(id);
             var candidature = await _context.Candidatures.FindAsync(id);
             if (candidature != null)
-            {
+            {        
+                _context.Remove(candidature);
                 _context.Remove(candidature);
                 _context.SaveChanges();
                 return Ok(new

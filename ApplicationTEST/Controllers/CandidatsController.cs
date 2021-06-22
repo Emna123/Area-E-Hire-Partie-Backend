@@ -15,7 +15,6 @@ using MailKit.Net.Smtp;
 namespace ApplicationTEST.Controllers
 
 {
-    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class CandidatsController : ControllerBase
@@ -28,6 +27,7 @@ namespace ApplicationTEST.Controllers
             _context = context;
             this.userManager = userManager;
         }
+        [Authorize(Roles = "Admin")]
 
         // GET: api/Candidats
         [HttpGet]
@@ -36,6 +36,7 @@ namespace ApplicationTEST.Controllers
             Console.WriteLine(HttpContext.User.ToString());
             return await _context.Candidats.ToListAsync();
         }
+        [Authorize(Roles = "Admin,User")]
 
         // GET: api/Candidats/5
         [HttpGet("{id}")]
@@ -47,10 +48,31 @@ namespace ApplicationTEST.Controllers
             return candidat;
 
         }
+        [Authorize(Roles = "Admin")]
+        [HttpPut]
+        [Route("ArchiverCandidat/{id}")]
+        public async Task<IActionResult> ArchiverCandidat(string id, Candidat candidat)
 
+        {
+            Candidat user = await userManager.FindByIdAsync(id);
+            if (user != null)
+            {
+                user.archiver = true;
+              
+                _context.Entry(user).State = EntityState.Modified;
+                _context.SaveChanges();
+                return Ok(new
+                {
+                    user = user
+                });
+            }
+            return NotFound();
+
+        }
         // PUT: api/Candidats/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
+        [Authorize(Roles = "Admin,User")]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutCandidat(string id, Candidat candidat)
         {
@@ -106,7 +128,9 @@ namespace ApplicationTEST.Controllers
         // POST: api/Candidats
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
+        [Authorize(Roles = "User")]
         [HttpPost]
+
         public async Task<ActionResult<Candidat>> PostCandidat(Candidat candidat)
         {
             _context.Candidats.Add(candidat);
@@ -114,6 +138,7 @@ namespace ApplicationTEST.Controllers
 
             return CreatedAtAction("GetCandidat", new { id = candidat.Id }, candidat);
         }
+        [Authorize(Roles = "Admin")]
 
         // DELETE: api/Candidats/5
         [HttpDelete("{id}")]
@@ -135,6 +160,8 @@ namespace ApplicationTEST.Controllers
         {
             return _context.Candidats.Any(e => e.Id == id);
         }
+        [Authorize(Roles = "User")]
+
         [HttpPost]
         [Route("AddLanguage/{id}")]
         public async Task<IActionResult> AddLangue(string id, [FromBody] Langue langue)
@@ -153,6 +180,7 @@ namespace ApplicationTEST.Controllers
             return NotFound();
 
         }
+        [Authorize(Roles = "User")]
 
         [HttpGet]
         [Route("getLanguages/{id}")]
@@ -172,6 +200,7 @@ namespace ApplicationTEST.Controllers
             return NotFound();
 
         }
+        [Authorize(Roles = "User")]
 
         [HttpDelete]
         [Route("DeleteLanguage/{id}")]
@@ -191,6 +220,7 @@ namespace ApplicationTEST.Controllers
         }
 
         //get experiences
+        [Authorize(Roles = "User")]
 
         [HttpGet]
         [Route("getExperiences/{id}")]
@@ -208,6 +238,7 @@ namespace ApplicationTEST.Controllers
             return NotFound();
         }
 
+        [Authorize(Roles = "User")]
 
         //Update Langue 
         [HttpPut]
@@ -257,6 +288,7 @@ namespace ApplicationTEST.Controllers
 
 
         //delete experience
+        [Authorize(Roles = "User")]
 
         [HttpDelete]
         [Route("DeleteExperience/{id}")]
@@ -274,6 +306,7 @@ namespace ApplicationTEST.Controllers
             }
             return NotFound();
         }
+        [Authorize(Roles = "User")]
 
         [HttpPost]
         [Route("AddExperience/{id}")]
@@ -292,6 +325,7 @@ namespace ApplicationTEST.Controllers
             }
             return NotFound();
         }
+        [Authorize(Roles = "Admin")]
 
         [HttpPost]
         [Route("AddCommentaire/{id}")]
@@ -311,6 +345,8 @@ namespace ApplicationTEST.Controllers
             return NotFound();
 
         }
+        [Authorize(Roles = "Admin")]
+
         [HttpDelete]
         [Route("DeleteCommentaire/{id}")]
         public async Task<IActionResult> DeleteCommentaire(int id)
@@ -328,6 +364,7 @@ namespace ApplicationTEST.Controllers
             return NotFound();
         }
 
+        [Authorize(Roles = "User")]
 
         //Update Experience 
         [HttpPut]

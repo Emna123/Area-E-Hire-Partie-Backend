@@ -23,6 +23,7 @@ namespace ApplicationTEST.Controllers
         {
             _context = context;
         }
+        [Authorize(Roles = "Admin,User")]
 
         //get all Offres
         [HttpGet]
@@ -48,7 +49,7 @@ namespace ApplicationTEST.Controllers
         }
 
         // GET api/<OffreController>/5
-        [Authorize]
+        [Authorize(Roles = "Admin,User")]
         [HttpGet]
         [Route("getOffre/{id}")]
 
@@ -64,7 +65,7 @@ namespace ApplicationTEST.Controllers
             return offre;
           
         }
-
+        [Authorize(Roles = "Admin,User")]
         [HttpGet]
         [Route("getOffreById/{id}")]
 
@@ -81,6 +82,7 @@ namespace ApplicationTEST.Controllers
 
         }
 
+        [Authorize(Roles = "Admin")]
         [Authorize]
         // POST api/<OffreController>
         [HttpPost]
@@ -100,7 +102,7 @@ namespace ApplicationTEST.Controllers
             }
             return NotFound();
         }
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         // PUT api/<OffreController>/5
         [HttpPut]
         [Route("PutOffre/{id}")]
@@ -131,33 +133,33 @@ namespace ApplicationTEST.Controllers
             return await _context.Offre.FindAsync(id);
         }
 
-       /* [HttpDelete]
-        [Route("DeleteExamenOffre/{id}")]
+        /* [HttpDelete]
+         [Route("DeleteExamenOffre/{id}")]
 
-        public async Task<ActionResult<Offre>> DeleteExamenOffre(int id)
-        {
-            var offre= await _context.Offre.FindAsync(id);
+         public async Task<ActionResult<Offre>> DeleteExamenOffre(int id)
+         {
+             var offre= await _context.Offre.FindAsync(id);
 
 
-            if (offre != null)
-            {
-                //offre.Examen= null;
-                _context.Remove(offre.Examen);
+             if (offre != null)
+             {
+                 //offre.Examen= null;
+                 _context.Remove(offre.Examen);
 
-                await _context.SaveChangesAsync();
+                 await _context.SaveChangesAsync();
 
-                return Ok(new
-                {
-                    msg = "Examen supprimée avec succée !"
-                });
-            }
-            return NotFound();
+                 return Ok(new
+                 {
+                     msg = "Examen supprimée avec succée !"
+                 });
+             }
+             return NotFound();
 
-            ;
-        }
-       */
+             ;
+         }
+        */
 
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         // DELETE api/<OffreController>/5
         [HttpDelete]
         [Route("DeleteOffre/{id}")]

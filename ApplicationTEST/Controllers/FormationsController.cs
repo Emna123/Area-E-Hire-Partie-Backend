@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace ApplicationTEST.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "User")]
     [Route("api/[controller]")]
     [ApiController]
     public class FormationsController : Controller

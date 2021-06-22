@@ -36,8 +36,22 @@ namespace ApplicationTEST
             services.AddSingleton(emailConfig);
             services.AddScoped<IEmailSender, EmailSender>();
             //For entity framework
+
           
             services.AddDbContext<TodoContext>(opt => opt.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
+            //For Identity
+            /* services.AddIdentity<Candidat, IdentityRole>()
+                 .AddEntityFrameworkStores<TodoContext>()
+                 .AddDefaultTokenProviders();
+             services.AddIdentity<Responsable_RH, IdentityRole>()
+             .AddEntityFrameworkStores<TodoContext>()
+             .AddDefaultTokenProviders();*/
+            services.AddIdentityCore<Candidat>().AddRoles<IdentityRole>().AddEntityFrameworkStores<TodoContext>();
+            services.AddIdentityCore<Responsable_RH>().AddRoles<IdentityRole>().AddEntityFrameworkStores<TodoContext>();
+
+          
+          
+         //   services.AddDbContext<TodoContext>(opt => opt.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
 
                services.AddIdentity<User,IdentityRole>()
                    .AddDefaultTokenProviders()
@@ -59,9 +73,6 @@ namespace ApplicationTEST
                 // .AddClaimsPrincipalFactory<UserClaimsPrincipalFactory<Responsable_RH, IdentityRole>>()
                 .AddEntityFrameworkStores<TodoContext>()
                 .AddDefaultTokenProviders();*/
-
-                //  .AddDefaultUI()
-                // .AddTokenProvider<DataProtectorTokenProvider<Responsable_RH>>(TokenOptions.DefaultProvider);
 
             services.Configure<DataProtectionTokenProviderOptions>(opt =>
             {

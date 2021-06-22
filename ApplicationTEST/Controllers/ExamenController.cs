@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 
 namespace ApplicationTEST.Controllers
 {
+    [Authorize(Roles = "Admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class ExamenController : ControllerBase
@@ -49,7 +50,7 @@ namespace ApplicationTEST.Controllers
             return examen;
 
         }
-        [Authorize]
+ 
         [HttpPost]
         [Route("PostExamen/{id}")]
 
@@ -69,7 +70,7 @@ namespace ApplicationTEST.Controllers
             }
             return NotFound();
         }
-        [Authorize]
+  
         [HttpPut]
         [Route("PutExamen/{id}")]
 
@@ -98,7 +99,6 @@ namespace ApplicationTEST.Controllers
 
             return await _context.Examens.FindAsync(id);
         }
-        [Authorize]
         [HttpDelete]
         [Route("DeleteExamen/{id}")]
         public async Task<IActionResult> DeleteExamen(int id)

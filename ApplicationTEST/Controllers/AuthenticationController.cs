@@ -1,4 +1,4 @@
-﻿using ApplicationTEST.Models;
+using ApplicationTEST.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -150,7 +150,7 @@ namespace ApplicationTEST.Controllers
                     issuer: _configuration["JWT:ValidIssuer"],
                     audience: _configuration["JWT:ValidAudience"],
                     expires: DateTime.Now.AddHours(5),
-                    //   claims = authClaims,
+                    claims: authClaims,
                     signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
                     );
                 return Ok(new
@@ -206,7 +206,18 @@ namespace ApplicationTEST.Controllers
                 UserName = model.UserName,
                 mdp = model.mdp,
             };
+
             var result = await userManagerRH.CreateAsync(responsable_RH, model.mdp);
+            bool x = await roleManager.RoleExistsAsync("Admin");
+
+            if (!x)
+            {
+                var role = new IdentityRole();
+                role.Name = "Admin";
+                await roleManager.CreateAsync(role);
+            }
+            var result1 = await userManager.AddToRoleAsync(responsable_RH, "Admin");
+
             if (!result.Succeeded)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, new Response { message = "Error has been occured !", status = "Error 500 !!" });
@@ -229,6 +240,7 @@ namespace ApplicationTEST.Controllers
                 };
 
                 foreach (var userRole in userRoles)
+
                 {
                     authClaims.Add(new Claim(ClaimTypes.Role, userRole));
                 }
@@ -237,8 +249,8 @@ namespace ApplicationTEST.Controllers
                 var token = new JwtSecurityToken(
                     issuer: _configuration["JWT:ValidIssuer"],
                     audience: _configuration["JWT:ValidAudience"],
-                    expires: DateTime.Now.AddHours(5),
-                    //   claims = authClaims,
+                    expires: DateTime.Now.AddHours(10),
+                      claims : authClaims,
                     signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
                     );
                 return Ok(new
@@ -253,7 +265,6 @@ namespace ApplicationTEST.Controllers
             }
         }
 
-      
 
         [HttpPost]
         [Route("UpdateRH")]
@@ -265,7 +276,6 @@ namespace ApplicationTEST.Controllers
             var token = await userManagerRH.GeneratePasswordResetTokenAsync(responsable_RH);
             await userManagerRH.ResetPasswordAsync(responsable_RH, token, model.mdp);
             var result = await userManagerRH.UpdateAsync(responsable_RH);
-
             if (!result.Succeeded)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, new Response { message = "Error has been occured !", status = "Error 500 !!" });
@@ -280,6 +290,7 @@ namespace ApplicationTEST.Controllers
         {
             var email = res.extrafield;
             Console.WriteLine("this a message from reset password : " + email);
+           // Candidat candidat = (Candidat)await userManager.FindByEmailAsync(email);
             var candidat = await userManager.FindByEmailAsync(email);
             if (candidat != null)
             {
