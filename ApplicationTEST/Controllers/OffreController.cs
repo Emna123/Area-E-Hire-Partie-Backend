@@ -83,6 +83,7 @@ namespace ApplicationTEST.Controllers
         }
 
         [Authorize(Roles = "Admin")]
+        [Authorize]
         // POST api/<OffreController>
         [HttpPost]
         [Route("PostOffre")]

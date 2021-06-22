@@ -43,6 +43,5 @@ namespace ApplicationTEST.Models
         public virtual ICollection<Result_Examen> examenresults { get; set; }
         public virtual Linkedin linkedin { get; set; }
         //public int  GenererId  {get; set;}   
-
     }
 }

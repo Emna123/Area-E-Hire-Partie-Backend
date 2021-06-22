@@ -3,15 +3,17 @@ using System;
 using ApplicationTEST.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace ApplicationTEST.Migrations
 {
     [DbContext(typeof(TodoContext))]
-    partial class TodoContextModelSnapshot : ModelSnapshot
+    [Migration("20210620123208_secondone")]
+    partial class secondone
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -538,6 +540,7 @@ namespace ApplicationTEST.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
                     b.Property<string>("Responsable_RHId")
                         .HasColumnType("text");
 
@@ -561,7 +564,7 @@ namespace ApplicationTEST.Migrations
 
                     b.HasKey("id");
 
-          b.HasIndex("Responsable_RHId");
+                    b.HasIndex("Responsable_RHId");
 
                     b.HasIndex("candidatId");
 
@@ -810,45 +813,6 @@ namespace ApplicationTEST.Migrations
                 {
                     b.HasBaseType("ApplicationTEST.Models.User");
 
-                    b.Property<string>("CVname")
-                        .HasColumnType("text");
-
-                    b.Property<string>("CVoriginalfilename")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Photo")
-                        .HasColumnType("text");
-
-                    b.Property<string>("adresse")
-                        .HasColumnType("text");
-
-                    b.Property<bool>("archiver")
-                        .HasColumnType("boolean");
-
-                    b.Property<DateTime>("date_naissance")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<string>("description")
-                        .HasColumnType("text");
-
-                    b.Property<string>("etat_matrimonial")
-                        .HasColumnType("text");
-
-                    b.Property<string>("genre")
-                        .HasColumnType("text");
-
-                    b.Property<string>("metier")
-                        .HasColumnType("text");
-
-                    b.Property<string>("nom")
-                        .HasColumnType("text");
-
-                    b.Property<string>("password")
-                        .HasColumnType("text");
-
-                    b.Property<string>("prenom")
-                        .HasColumnType("text");
-
                     b.HasDiscriminator().HasValue("Candidat");
                 });
 
@@ -858,12 +822,6 @@ namespace ApplicationTEST.Migrations
 
                     b.Property<int>("code")
                         .HasColumnType("integer");
-
-                    b.Property<string>("key")
-                        .HasColumnType("text");
-
-                    b.Property<string>("mdp")
-                        .HasColumnType("text");
 
                     b.Property<int?>("genererid_generer")
                         .HasColumnType("integer");
@@ -1154,7 +1112,6 @@ namespace ApplicationTEST.Migrations
                         .IsRequired();
                 });
 
-
             modelBuilder.Entity("ApplicationTEST.Models.Responsable_RH", b =>
                 {
                     b.HasOne("ApplicationTEST.Models.Generer", "generer")
@@ -1227,6 +1184,7 @@ namespace ApplicationTEST.Migrations
                     b.Navigation("Langue");
 
                     b.Navigation("linkedin");
+                });
 
             modelBuilder.Entity("ApplicationTEST.Models.Responsable_RH", b =>
                 {
