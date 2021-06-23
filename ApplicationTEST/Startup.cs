@@ -14,6 +14,7 @@ using Microsoft.IdentityModel.Tokens;
 using System;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace ApplicationTEST
 {
@@ -36,15 +37,31 @@ namespace ApplicationTEST
             services.AddSingleton(emailConfig);
             services.AddScoped<IEmailSender, EmailSender>();
             //For entity framework
+
           
             services.AddDbContext<TodoContext>(opt => opt.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
-
-               services.AddIdentity<User,IdentityRole>()
+            //For Identity
+            /* services.AddIdentity<Candidat, IdentityRole>()
+                 .AddEntityFrameworkStores<TodoContext>()
+                 .AddDefaultTokenProviders();
+             services.AddIdentity<Responsable_RH, IdentityRole>()
+             .AddEntityFrameworkStores<TodoContext>()
+             .AddDefaultTokenProviders();*/
+            services.AddIdentity<User, IdentityRole>()
                    .AddDefaultTokenProviders()
-                 //  .AddClaimsPrincipalFactory<UserClaimsPrincipalFactory<Candidat, IdentityRole>>()
+                   //  .AddClaimsPrincipalFactory<UserClaimsPrincipalFactory<Candidat, IdentityRole>>()
                    //.AddDefaultUI()
                    .AddRoles<IdentityRole>()
                    .AddEntityFrameworkStores<TodoContext>();
+
+            services.AddIdentityCore<Candidat>().AddRoles<IdentityRole>().AddEntityFrameworkStores<TodoContext>();
+            services.AddIdentityCore<Responsable_RH>().AddRoles<IdentityRole>().AddEntityFrameworkStores<TodoContext>();
+
+          
+          
+         //   services.AddDbContext<TodoContext>(opt => opt.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
+
+               
 
           /*  services.AddIdentity<Candidat, IdentityRole>()
               .AddRoles<IdentityRole>()
@@ -60,16 +77,13 @@ namespace ApplicationTEST
                 .AddEntityFrameworkStores<TodoContext>()
                 .AddDefaultTokenProviders();*/
 
-                //  .AddDefaultUI()
-                // .AddTokenProvider<DataProtectorTokenProvider<Responsable_RH>>(TokenOptions.DefaultProvider);
-
             services.Configure<DataProtectionTokenProviderOptions>(opt =>
             {
                 opt.Name = "Default";
                 opt.TokenLifespan = TimeSpan.FromHours(1);
             });
 
-            services.ConfigureApplicationCookie(options =>
+            /*services.ConfigureApplicationCookie(options =>
             {
                 // Cookie settings
                 options.Cookie.HttpOnly = true;
@@ -77,7 +91,7 @@ namespace ApplicationTEST
                 options.LoginPath = "/Identity/Account/Login";
                 options.AccessDeniedPath = "/Identity/Account/AccessDenied";
                 options.SlidingExpiration = true;
-            });
+            });*/
 
 
             //Adding authentication
@@ -102,6 +116,17 @@ namespace ApplicationTEST
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JWT:Secret"]))
 
 
+                };
+                options.Events = new JwtBearerEvents
+                {
+                    OnAuthenticationFailed = context =>
+                    {
+                        if (context.Exception.GetType() == typeof(SecurityTokenExpiredException))
+                        {
+                            context.Response.Headers.Add("Token-Expired", "true");
+                        }
+                        return Task.CompletedTask;
+                    }
                 };
             });
 

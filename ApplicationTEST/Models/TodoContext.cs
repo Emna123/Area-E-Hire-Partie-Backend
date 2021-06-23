@@ -135,6 +135,10 @@ namespace ApplicationTEST.Models
                .HasMany(pt => pt.reponses)
                .WithOne(p => p.question);
 
+            modelBuilder.Entity<Candidat>()
+                 .HasMany(pt => pt.RefreshTokens)
+                 .WithOne(p => p.candidat);
+
             /*    modelBuilder.Entity<Candidat>()
                        .HasOne(pt => pt.Examen)
                        .WithOne(p => p.Offre);*/
@@ -169,5 +173,6 @@ namespace ApplicationTEST.Models
         public DbSet<Result_Examen> Results_Examens { get; set; }
         public DbSet<Note_Question> Note_Questions { get; set; }
         public DbSet<Reponse> Reponses { get; set; }
+        public DbSet<RefreshToken> refreshTokens { get; set; }
     }
 }

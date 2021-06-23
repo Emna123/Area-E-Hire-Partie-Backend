@@ -474,6 +474,29 @@ namespace ApplicationTEST.Migrations
                     b.ToTable("Questionnaire");
                 });
 
+            modelBuilder.Entity("ApplicationTEST.Models.RefreshToken", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<string>("access_token")
+                        .HasColumnType("text");
+
+                    b.Property<string>("candidatId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("refresh_token")
+                        .HasColumnType("text");
+
+                    b.HasKey("id");
+
+                    b.HasIndex("candidatId");
+
+                    b.ToTable("refreshTokens");
+                });
+
             modelBuilder.Entity("ApplicationTEST.Models.Reponse", b =>
                 {
                     b.Property<int>("id")
@@ -747,6 +770,9 @@ namespace ApplicationTEST.Migrations
                     b.Property<string>("adresse")
                         .HasColumnType("text");
 
+                    b.Property<bool>("archiver")
+                        .HasColumnType("boolean");
+
                     b.Property<DateTime>("date_naissance")
                         .HasColumnType("timestamp without time zone");
 
@@ -952,6 +978,15 @@ namespace ApplicationTEST.Migrations
                     b.Navigation("offre");
                 });
 
+            modelBuilder.Entity("ApplicationTEST.Models.RefreshToken", b =>
+                {
+                    b.HasOne("ApplicationTEST.Models.Candidat", "candidat")
+                        .WithMany("RefreshTokens")
+                        .HasForeignKey("candidatId");
+
+                    b.Navigation("candidat");
+                });
+
             modelBuilder.Entity("ApplicationTEST.Models.Reponse", b =>
                 {
                     b.HasOne("ApplicationTEST.Models.Question", "question")
@@ -1085,6 +1120,8 @@ namespace ApplicationTEST.Migrations
                     b.Navigation("Langue");
 
                     b.Navigation("linkedin");
+
+                    b.Navigation("RefreshTokens");
                 });
 #pragma warning restore 612, 618
         }

@@ -10,8 +10,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ApplicationTEST.Migrations
 {
     [DbContext(typeof(TodoContext))]
-    [Migration("20210621145105_thirdone")]
-    partial class thirdone
+    [Migration("20210622123949_first one")]
+    partial class firstone
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -748,6 +748,9 @@ namespace ApplicationTEST.Migrations
 
                     b.Property<string>("adresse")
                         .HasColumnType("text");
+
+                    b.Property<bool>("archiver")
+                        .HasColumnType("boolean");
 
                     b.Property<DateTime>("date_naissance")
                         .HasColumnType("timestamp without time zone");

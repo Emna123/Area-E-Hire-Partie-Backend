@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace ApplicationTEST.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "User")]
     [Route("api/[controller]")]
     [ApiController]
     public class HobbyController : ControllerBase

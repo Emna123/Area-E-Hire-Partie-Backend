@@ -12,7 +12,6 @@ using System.Threading.Tasks;
 
 namespace ApplicationTEST.Controllers
 { 
-    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class CompetenceController : ControllerBase
@@ -27,9 +26,10 @@ namespace ApplicationTEST.Controllers
             _context = context;
             //candidats = _candidats;
         }
-     
+
         // GET api/<CompetenceController>
-      
+        [Authorize(Roles = "Admin,User")]
+
         [HttpGet]
         [Route("getAllCompetences/{id}")]
         public async Task<IActionResult> GetCompetences(string id)
@@ -45,6 +45,7 @@ namespace ApplicationTEST.Controllers
             }
             return NotFound();
         }
+        [Authorize(Roles = "User")]
 
         [HttpPost]
         [Route("AddCompetence/{id}")]
@@ -63,6 +64,7 @@ namespace ApplicationTEST.Controllers
             }
             return NotFound();
         }
+        [Authorize(Roles = "User")]
 
         [HttpDelete]
         [Route("DeleteCompetence/{id}")]
@@ -80,6 +82,7 @@ namespace ApplicationTEST.Controllers
             }
             return NotFound();
         }
+        [Authorize(Roles = "Admin")]
 
         [HttpPost]
         [Route("AddOffreCompetence/{id}")]
@@ -98,6 +101,7 @@ namespace ApplicationTEST.Controllers
             }
             return NotFound();
         }
+        [Authorize(Roles = "Admin")]
 
         [HttpDelete]
         [Route("DeleteOffreCompetence/{id}")]
@@ -115,9 +119,10 @@ namespace ApplicationTEST.Controllers
             }
             return NotFound();
         }
+        [Authorize(Roles = "User")]
 
-            //Update Compétence 
-            [HttpPut]
+        //Update Compétence 
+        [HttpPut]
         [Route("UpdateCompetence/{id}")]
         public async Task<IActionResult> UpdateCompt(int id, Competence comp)
         {
@@ -137,6 +142,7 @@ namespace ApplicationTEST.Controllers
             }
             return NotFound();
         }
+        [Authorize(Roles = "Admin")]
 
         [HttpPut]
         [Route("PutOffreCompetence/{id}")]

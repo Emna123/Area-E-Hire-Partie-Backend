@@ -1,4 +1,4 @@
-﻿using ApplicationTEST.Models;
+using ApplicationTEST.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -45,12 +45,8 @@ namespace ApplicationTEST.Controllers
             _context = context;
             _configuration = configuration;
         }
-        /* public Sendmail()
-         {
 
 
-         }*/
-//
         [HttpPost]
         [Route("Register")]
         public async Task<IActionResult> Register([FromBody] Candidat model)
@@ -118,6 +114,9 @@ namespace ApplicationTEST.Controllers
             return Ok(new Response { message = "User succefully added !", status = "success 200 " });
         }
 
+      
+
+
         [HttpPost]
         [Route("Login")]
         public async Task<IActionResult> Login([FromBody] Candidat model)
@@ -143,7 +142,17 @@ namespace ApplicationTEST.Controllers
                 {
                     authClaims.Add(new Claim(ClaimTypes.Role, userRole));
                 }
-                var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
+                var token = GenerateToken(authClaims);
+                var reftoken = GenerateRefreshToken();
+                var refreshtoken = new RefreshToken
+                {
+                    refresh_token = reftoken,
+                    access_token = token,
+                    candidat = (Candidat) user
+                };
+                _context.Add(refreshtoken);
+                _context.SaveChanges();
+              /*  var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
                 var email = "";
                 var token = new JwtSecurityToken(
                     issuer: _configuration["JWT:ValidIssuer"],
@@ -151,19 +160,21 @@ namespace ApplicationTEST.Controllers
                     expires: DateTime.Now.AddMinutes(5),
                     claims : authClaims,
                     signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
-                    );
+                    );*/
                 return Ok(new
                 {
-                    token = new JwtSecurityTokenHandler().WriteToken(token),
+                    token = token,
+                    refreshtoken = reftoken,
                     user = user
                 });
             }
-
             else
             {
                 return Unauthorized();
             }
         }
+
+
         [HttpPost]
         [Route("Inscription/ConfimMail")]
         public async Task<IActionResult> ConfirmInscription([FromBody] Candidat candidat)
@@ -206,7 +217,18 @@ namespace ApplicationTEST.Controllers
                 UserName = model.UserName,
                 mdp = model.mdp,
             };
+
             var result = await userManagerRH.CreateAsync(responsable_RH, model.mdp);
+            bool x = await roleManager.RoleExistsAsync("Admin");
+
+            if (!x)
+            {
+                var role = new IdentityRole();
+                role.Name = "Admin";
+                await roleManager.CreateAsync(role);
+            }
+            var result1 = await userManager.AddToRoleAsync(responsable_RH, "Admin");
+
             if (!result.Succeeded)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, new Response { message = "Error has been occured !", status = "Error 500 !!" });
@@ -227,7 +249,6 @@ namespace ApplicationTEST.Controllers
                     new Claim(ClaimTypes.Name,userRH.Email),
                     new Claim(System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString())
                 };
-
                 foreach (var userRole in userRoles)
                 {
                     authClaims.Add(new Claim(ClaimTypes.Role, userRole));
@@ -237,8 +258,8 @@ namespace ApplicationTEST.Controllers
                 var token = new JwtSecurityToken(
                     issuer: _configuration["JWT:ValidIssuer"],
                     audience: _configuration["JWT:ValidAudience"],
-                    expires: DateTime.Now.AddHours(5),
-                    //   claims = authClaims,
+                    expires: DateTime.Now.AddHours(10),
+                    claims : authClaims,
                     signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
                     );
                 return Ok(new
@@ -253,7 +274,6 @@ namespace ApplicationTEST.Controllers
             }
         }
 
-      
 
         [HttpPost]
         [Route("UpdateRH")]
@@ -265,7 +285,6 @@ namespace ApplicationTEST.Controllers
             var token = await userManagerRH.GeneratePasswordResetTokenAsync(responsable_RH);
             await userManagerRH.ResetPasswordAsync(responsable_RH, token, model.mdp);
             var result = await userManagerRH.UpdateAsync(responsable_RH);
-
             if (!result.Succeeded)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, new Response { message = "Error has been occured !", status = "Error 500 !!" });
@@ -280,7 +299,9 @@ namespace ApplicationTEST.Controllers
         {
             var email = res.extrafield;
             Console.WriteLine("this a message from reset password : " + email);
-            Candidat candidat = (Candidat) await userManager.FindByEmailAsync(email);
+           // Candidat candidat = (Candidat) await userManager.FindByEmailAsync(email);
+            Candidat candidat = (Candidat)await userManager.FindByEmailAsync(email);
+            //var candidat = await userManager.FindByEmailAsync(email);
             if (candidat != null)
             {
                 var token = await userManager.GeneratePasswordResetTokenAsync(candidat);
@@ -311,7 +332,6 @@ namespace ApplicationTEST.Controllers
                 return NotFound();
             }
         }
-
 
 
         //change password 
@@ -353,7 +373,127 @@ namespace ApplicationTEST.Controllers
             }
         }
 
+
+        private ClaimsPrincipal GetPrincipalFromExpiredToken(string token)
+        {
+            var tokenvalidationparams = new TokenValidationParameters()
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidAudience = _configuration["JWT:ValidAudience"],
+                ValidIssuer = _configuration["JWT:ValidIssuer"],
+                ValidateLifetime = false,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]))
+            };
+            var tokenHandler = new JwtSecurityTokenHandler();
+            SecurityToken securityToken;
+            var principal = tokenHandler.ValidateToken(token, tokenvalidationparams, out securityToken);
+            var jwtSecurityToken = securityToken as JwtSecurityToken;
+            if (jwtSecurityToken == null || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
+                throw new SecurityTokenException("Invalid token");
+            return principal;
+        }
+
+        private string GenerateToken(IEnumerable<Claim> claims)
+        {
+            var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
+            var token = new JwtSecurityToken(
+                issuer: _configuration["JWT:ValidIssuer"],
+                audience: _configuration["JWT:ValidAudience"],
+                expires: DateTime.Now.AddMinutes(5),
+                claims : claims,
+                signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
+                );
+            return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
+        public string GenerateRefreshToken()
+        {
+            var randomNumber = new byte[32];
+            using (var rng = RandomNumberGenerator.Create())
+            {
+                rng.GetBytes(randomNumber);
+                return Convert.ToBase64String(randomNumber);
+            }
+        }
+        
+        public IActionResult Refresh1(string token,string refreshToken)
+        {
+            var principal = GetPrincipalFromExpiredToken(token);
+            var username = principal.Identity.Name;
+            var newJwtToken = GenerateToken(principal.Claims);
+            var newRefreshToken = GenerateRefreshToken();
+            return new ObjectResult(new
+            {
+                token = newJwtToken,
+                refreshToken = newRefreshToken
+            });
+        }
+        [HttpPost]
+        [Route("refresh")]
+        public async Task<IActionResult> RefreshAsync( [FromBody] RefreshToken reft)
+        {
+            var principal = GetPrincipalFromExpiredToken(reft.access_token);
+            var email = principal.Identity.Name;
+            Candidat user = (Candidat) await userManager.FindByEmailAsync(email);
+            //retrieve the refresh token from a data store
+            var savedRefreshToken =  user.RefreshTokens.Where(
+            x=>x.refresh_token == reft.refresh_token && 
+            x.access_token == reft.access_token).FirstOrDefault();
+            if (savedRefreshToken != null) {
+                if (savedRefreshToken.refresh_token != reft.refresh_token){
+                    throw new SecurityTokenException("Invalid refresh token");
+                }
+                var newJwtToken = GenerateToken(principal.Claims);
+                var newRefreshToken = GenerateRefreshToken();
+                savedRefreshToken.refresh_token = newRefreshToken;
+                savedRefreshToken.access_token = newJwtToken;
+                _context.SaveChanges();
+                //DeleteRefreshToken(username, refreshToken);
+                //SaveRefreshToken(username, newRefreshToken);
+                return new ObjectResult(new
+                {
+                    token = newJwtToken,
+                    refreshToken = newRefreshToken
+                });
+            }
+            else
+            {
+                return Ok(new
+                {
+                    msg="refresh token not found for this user !!!!"
+                });
+            }   
+        }
+
+        [HttpPost]
+        [Route("logout/{id}")]
+        public async Task<IActionResult> logout([FromBody] RefreshToken reft , string id)
+        {
+            Candidat user = (Candidat) await userManager.FindByIdAsync(id);
+            if (user != null)
+            {
+                var savedRefreshToken = user.RefreshTokens.Where(x => x.refresh_token == reft.refresh_token &&
+                x.access_token == reft.access_token).FirstOrDefault();
+                Console.WriteLine(savedRefreshToken == null);
+                Console.WriteLine(reft.access_token);
+                Console.WriteLine(reft.refresh_token);
+                if (savedRefreshToken != null)
+                {
+                    _context.Remove(savedRefreshToken);
+                    _context.SaveChanges();
+                    return Ok(new { msg = "success !" });
+                }
+                else
+                {
+                    return StatusCode(404);
+                }
+            }
+            else
+            {
+                return StatusCode(403);
+            }
+        }
+
     }
-
-
 }
