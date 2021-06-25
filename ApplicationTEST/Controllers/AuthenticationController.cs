@@ -291,7 +291,7 @@ namespace ApplicationTEST.Controllers
             var email = res.extrafield;
             Console.WriteLine("this a message from reset password : " + email);
            // Candidat candidat = (Candidat)await userManager.FindByEmailAsync(email);
-            var candidat = await userManager.FindByEmailAsync(email);
+            Candidat candidat = (Candidat)await userManager.FindByEmailAsync(email);
             if (candidat != null)
             {
                 var token = await userManager.GeneratePasswordResetTokenAsync(candidat);
