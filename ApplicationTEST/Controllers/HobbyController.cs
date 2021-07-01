@@ -17,10 +17,10 @@ namespace ApplicationTEST.Controllers
     public class HobbyController : ControllerBase
     {
         private readonly TodoContext _context;
-        private readonly UserManager<Candidat> userManager;
+        private readonly UserManager<User> userManager;
 
 
-        public HobbyController(UserManager<Candidat> userManager, TodoContext context)
+        public HobbyController(UserManager<User> userManager, TodoContext context)
         {
             this.userManager = userManager;
             _context = context;
@@ -30,7 +30,7 @@ namespace ApplicationTEST.Controllers
         [Route("getAllHobbies/{id}")]
         public async Task<IActionResult> GetHobbies(string id)
         {
-            var user = await userManager.FindByIdAsync(id);
+            Candidat user = (Candidat)await userManager.FindByIdAsync(id);
             if (user != null)
             {
                 var hobbies = user.Hobby ;
@@ -45,8 +45,8 @@ namespace ApplicationTEST.Controllers
         [HttpPost]
         [Route("AddHobby/{id}")]
         public async Task<IActionResult> AddHobby(string id, [FromBody] Hobby hobby)
-        {
-            var user = await userManager.FindByIdAsync(id);
+        { 
+            Candidat user = (Candidat) await userManager.FindByIdAsync(id);
             if (user != null)
             {
                 hobby.candidat = user;

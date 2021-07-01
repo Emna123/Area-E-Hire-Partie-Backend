@@ -265,13 +265,14 @@ namespace ApplicationTEST.Controllers
             }
         }
 
+      
 
         [HttpPost]
         [Route("UpdateRH")]
         public async Task<IActionResult> UpdateRH([FromBody] Responsable_RH model)
         {
-            Responsable_RH responsable_RH = (Responsable_RH) await userManagerRH.FindByEmailAsync(model.Email);
-            responsable_RH.mdp = model.mdp;
+            Responsable_RH responsable_RH = (Responsable_RH)await userManagerRH.FindByEmailAsync(model.Email);
+           responsable_RH.mdp = model.mdp;
             responsable_RH.code = model.code;
             var token = await userManagerRH.GeneratePasswordResetTokenAsync(responsable_RH);
             await userManagerRH.ResetPasswordAsync(responsable_RH, token, model.mdp);
@@ -280,18 +281,19 @@ namespace ApplicationTEST.Controllers
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, new Response { message = "Error has been occured !", status = "Error 500 !!" });
             }
+
+
             return Ok(new Response { message = "User succefully added !", status = "success 200 " });
         }
 
-        //reset password user
+
         [HttpPost]
         [Route("ResetPassword")]
         public async Task<IActionResult> checkEmailCandidat([FromBody] Response res)
         {
             var email = res.extrafield;
             Console.WriteLine("this a message from reset password : " + email);
-           // Candidat candidat = (Candidat)await userManager.FindByEmailAsync(email);
-            Candidat candidat = (Candidat)await userManager.FindByEmailAsync(email);
+            var candidat = await userManager.FindByEmailAsync(email);
             if (candidat != null)
             {
                 var token = await userManager.GeneratePasswordResetTokenAsync(candidat);
@@ -322,8 +324,6 @@ namespace ApplicationTEST.Controllers
                 return NotFound();
             }
         }
-
-
 
         //change password 
         [HttpPost]

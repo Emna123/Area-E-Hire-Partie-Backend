@@ -54,7 +54,7 @@ namespace ApplicationTEST.Controllers
         public async Task<IActionResult> ArchiverCandidat(string id, Candidat candidat)
 
         {
-            Candidat user = await userManager.FindByIdAsync(id);
+            var user = await userManager.FindByIdAsync(id);
             if (user != null)
             {
                 user.archiver = true;
@@ -77,7 +77,7 @@ namespace ApplicationTEST.Controllers
         public async Task<IActionResult> PutCandidat(string id, Candidat candidat)
         {
 
-            var user = await userManager.FindByIdAsync(id);
+            Candidat user = (Candidat) await userManager.FindByIdAsync(id);
             if (user != null)
             {
                 user.nom = candidat.nom;

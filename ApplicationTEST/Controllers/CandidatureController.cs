@@ -17,9 +17,9 @@ namespace ApplicationTEST.Controllers
     public class CandidatureController : ControllerBase
     {
         private readonly TodoContext _context;
-        private readonly UserManager<Candidat> userManager;
+        private readonly UserManager<User> userManager;
 
-        public CandidatureController(UserManager<Candidat> userManager, TodoContext context)
+        public CandidatureController(UserManager<User> userManager, TodoContext context)
         {
             _context = context;
             this.userManager = userManager;
@@ -37,7 +37,7 @@ namespace ApplicationTEST.Controllers
         [Route("AddCandidature/{id}/{idoffre}")]
         public async Task<IActionResult> AddCandidature(string id,int idoffre, [FromBody] Candidature candidature)
         {
-            var user = await userManager.FindByIdAsync(id);
+            Candidat user = (Candidat)await userManager.FindByIdAsync(id);
             var offre = await _context.Offres.FindAsync(idoffre);
             Console.WriteLine("Offre ", offre);
             if (user != null && offre != null)
@@ -61,7 +61,7 @@ namespace ApplicationTEST.Controllers
         [Route("getAllCandidatures/{id}")]
         public async Task<ActionResult<IEnumerable<Candidature>>> getAllCandidatures(string id)
         {
-            var user = await userManager.FindByIdAsync(id);
+            Candidat user = (Candidat)await userManager.FindByIdAsync(id);
             if (user != null)
             {
                 var candidatures = user.candidatures;

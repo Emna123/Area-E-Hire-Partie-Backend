@@ -17,9 +17,9 @@ namespace ApplicationTEST.Controllers
     public class LinkedinController : ControllerBase
     {
         private readonly TodoContext _context;
-        private readonly UserManager<Candidat> userManager;
+        private readonly UserManager<User> userManager;
 
-        public LinkedinController(UserManager<Candidat> userManager, TodoContext context)
+        public LinkedinController(UserManager<User> userManager, TodoContext context)
         {
             this.userManager = userManager;
             _context = context;
@@ -29,7 +29,7 @@ namespace ApplicationTEST.Controllers
         [Route("getLinkedin/{id}")]
         public async Task<IActionResult> GetLinkedin(string id)
         {
-            var user = await userManager.FindByIdAsync(id);
+            Candidat user = (Candidat) await userManager.FindByIdAsync(id);
             if (user != null)
             {
                 var linkedin = user.linkedin;
@@ -46,7 +46,7 @@ namespace ApplicationTEST.Controllers
         [Route("AddLinkedin/{id}")]
         public async Task<IActionResult> AddLinkedin(string id, [FromBody] Linkedin lin)
         {
-            var user = await userManager.FindByIdAsync(id);
+            Candidat user = (Candidat) await userManager.FindByIdAsync(id);
             if (user != null)
             {
                 Linkedin x = _context.Linkedins.Where(c => c.candidat == user).FirstOrDefault();

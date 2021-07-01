@@ -16,8 +16,8 @@ namespace ApplicationTEST.Models
         //[Key]
         // public long Id { get; set; }
         public string nom { get; set; }
-        public Boolean archiver { get; set; }
 
+        public Boolean archiver { get; set; }
         public string prenom { get; set; }
         public string password { get; set; }
         public string CVname { get; set; }
@@ -42,6 +42,7 @@ namespace ApplicationTEST.Models
         public virtual ICollection<Commentaire> Commentaire { get; set; }
         public virtual ICollection<Result_Examen> examenresults { get; set; }
         public virtual Linkedin linkedin { get; set; }
+        public virtual ICollection<RefreshToken> RefreshTokens { get; set; }
         //public int  GenererId  {get; set;}   
     }
 }

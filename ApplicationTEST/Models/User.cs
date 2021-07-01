@@ -8,6 +8,6 @@ namespace ApplicationTEST.Models
 {
     public class User : IdentityUser
     {
-        
+
     }
 }

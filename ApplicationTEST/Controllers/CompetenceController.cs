@@ -17,10 +17,10 @@ namespace ApplicationTEST.Controllers
     public class CompetenceController : ControllerBase
     {
         private readonly TodoContext _context;
-        private readonly UserManager<Candidat> userManager;
+        private readonly UserManager<User> userManager;
 
 
-        public CompetenceController(UserManager<Candidat> userManager, TodoContext context)
+        public CompetenceController(UserManager<User> userManager, TodoContext context)
         {
             this.userManager = userManager;
             _context = context;
@@ -34,7 +34,7 @@ namespace ApplicationTEST.Controllers
         [Route("getAllCompetences/{id}")]
         public async Task<IActionResult> GetCompetences(string id)
         {
-            var user = await userManager.FindByIdAsync(id);
+            Candidat user = (Candidat)await userManager.FindByIdAsync(id);
             if (user != null)
             {
                 var comps = user.Competence;
@@ -51,7 +51,7 @@ namespace ApplicationTEST.Controllers
         [Route("AddCompetence/{id}")]
         public async Task<IActionResult> AddCompetence(string id, [FromBody] Competence comp)
         {
-            var user = await userManager.FindByIdAsync(id);
+            Candidat user = (Candidat)await userManager.FindByIdAsync(id);
             if (user != null)
             {
                 comp.candidat = user;
